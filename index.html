@@ -1,1 +1,33 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Infovis mínima</title>
+  <style>
+    :root { font-family: system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, "Helvetica Neue", Arial, sans-serif; }
+    body { margin: 0; padding: 24px; background:#fafafa; color:#111; }
+    h1 { font-size: 1.1rem; margin: 0 0 12px; }
+    #chart { width: 100%; height: 320px; border: 1px dashed #ccc; background: #fff; }
+    .mark { fill: #4a90e2; opacity: .9; }
+  </style>
+</head>
+<body>
+  <h1>Mi primera infovis</h1>
+
+  <!-- Lienzo -->
+  <svg id="chart" viewBox="0 0 600 320" role="img" aria-label="Ejemplo de puntos">
+    <!-- marcas de ejemplo -->
+    <circle class="mark" cx="80"  cy="220" r="8"></circle>
+    <circle class="mark" cx="200" cy="180" r="8"></circle>
+    <circle class="mark" cx="320" cy="140" r="8"></circle>
+    <circle class="mark" cx="440" cy="100" r="8"></circle>
+  </svg>
+
+  <script>
+    // Aquí puedes dibujar con JS puro si lo necesitas
+    // const svg = document.getElementById('chart');
+  </script>
+</body>
+</html>
 

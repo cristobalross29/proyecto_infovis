@@ -1,33 +1,57 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Infovis mínima</title>
-  <style>
-    :root { font-family: system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, "Helvetica Neue", Arial, sans-serif; }
-    body { margin: 0; padding: 24px; background:#fafafa; color:#111; }
-    h1 { font-size: 1.1rem; margin: 0 0 12px; }
-    #chart { width: 100%; height: 320px; border: 1px dashed #ccc; background: #fff; }
-    .mark { fill: #4a90e2; opacity: .9; }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Análisis de Redes Sociales</title>
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: #f5f5f5;
+        }
+        .chart-container {
+            background: white;
+            margin: 20px 0;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 30px;
+        }
+        .chart {
+            width: 100%;
+            height: 500px;
+        }
+    </style>
 </head>
 <body>
-  <h1>Mi primera infovis</h1>
+    <h1>Análisis del Uso de Redes Sociales</h1>
+    
+    <div class="chart-container">
+        <div id="chart1" class="chart"></div>
+    </div>
+    
+    <div class="chart-container">
+        <div id="chart2" class="chart"></div>
+    </div>
+    
+    <div class="chart-container">
+        <div id="chart3" class="chart"></div>
+    </div>
+    
+    <div class="chart-container">
+        <div id="chart4" class="chart"></div>
+    </div>
+    
+    <div class="chart-container">
+        <div id="chart5" class="chart"></div>
+    </div>
 
-  <!-- Lienzo -->
-  <svg id="chart" viewBox="0 0 600 320" role="img" aria-label="Ejemplo de puntos">
-    <!-- marcas de ejemplo -->
-    <circle class="mark" cx="80"  cy="220" r="8"></circle>
-    <circle class="mark" cx="200" cy="180" r="8"></circle>
-    <circle class="mark" cx="320" cy="140" r="8"></circle>
-    <circle class="mark" cx="440" cy="100" r="8"></circle>
-  </svg>
-
-  <script>
-    // Aquí puedes dibujar con JS puro si lo necesitas
-    // const svg = document.getElementById('chart');
-  </script>
+    <script src="main.js"></script>
 </body>
 </html>
-

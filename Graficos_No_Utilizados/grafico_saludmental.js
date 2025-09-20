@@ -19,7 +19,7 @@ export function createChart3(data) {
     };
     
     const layout = {
-        title: 'Horas de Uso Diario vs Puntuación de Salud Mental',
+        title: '3. Más horas de redes sociales = Peor salud mental',
         xaxis: {
             title: 'Horas de Uso Diario Promedio'
         },

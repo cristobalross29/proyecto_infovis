@@ -14,8 +14,8 @@ export function createLineasImpactoChart(data) {
         }
     });
     
-    // Sort hours and create arrays for the lines
-    const sortedHours = Object.keys(groupedData).map(h => parseInt(h)).sort((a, b) => a - b);
+    // Sort hours and create arrays for the lines (limit to 7 hours)
+    const sortedHours = Object.keys(groupedData).map(h => parseInt(h)).filter(h => h <= 7).sort((a, b) => a - b);
     const affectsCount = sortedHours.map(hour => groupedData[hour].Yes);
     const notAffectsCount = sortedHours.map(hour => groupedData[hour].No);
     
@@ -33,7 +33,7 @@ export function createLineasImpactoChart(data) {
             color: 'red',
             size: 8
         },
-        name: 'Afecta en estudios'
+        name: 'Afecta rendimiento académico'
     };
     
     // Trace for people not affected (blue line)
@@ -50,13 +50,13 @@ export function createLineasImpactoChart(data) {
             color: 'blue',
             size: 8
         },
-        name: 'No afecta en estudios'
+        name: 'No afecta rendimiento académico'
     };
     
     const layout = {
-        title: 'Impacto Académico por Horas de Uso de Redes Sociales',
+        title: '1. Más horas de redes sociales = Más estudiantes con problemas académicos',
         xaxis: {
-            title: 'Horas de Uso Diario',
+            title: 'Horas de Uso Diario de Redes Sociales',
             dtick: 1
         },
         yaxis: {
@@ -64,8 +64,10 @@ export function createLineasImpactoChart(data) {
         },
         showlegend: true,
         legend: {
-            x: 0,
+            x: 0.1,
             y: 1,
+            xanchor: 'left',
+            yanchor: 'top',
             bgcolor: 'rgba(255,255,255,0.8)',
             bordercolor: 'rgba(0,0,0,0.2)',
             borderwidth: 1

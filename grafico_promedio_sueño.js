@@ -8,22 +8,23 @@ export function createPromedioSueñoChart(data) {
         }))
         .filter(d => !isNaN(d.usage) && !isNaN(d.sleep));
     
-    // Group by usage hours (rounded) and calculate average sleep hours
+    // Group by usage hours (rounded to 30 min) and calculate average sleep hours
     const groupedData = {};
     validData.forEach(d => {
-        const usageHour = Math.round(d.usage);
+        const usageHour = Math.round(d.usage * 2) / 2;
         if (!groupedData[usageHour]) {
             groupedData[usageHour] = [];
         }
         groupedData[usageHour].push(d.sleep);
     });
-    
-    // Calculate averages for each usage hour
+
+    // Calculate averages for each usage hour (limit to 7 hours)
     const averageData = Object.keys(groupedData)
         .map(usageHour => ({
-            usage: parseInt(usageHour),
+            usage: parseFloat(usageHour),
             avgSleep: groupedData[usageHour].reduce((sum, sleep) => sum + sleep, 0) / groupedData[usageHour].length
         }))
+        .filter(d => d.usage <= 7)
         .sort((a, b) => a.usage - b.usage);
     
     const trace = {
@@ -47,9 +48,10 @@ export function createPromedioSueñoChart(data) {
     };
     
     const layout = {
-        title: 'Promedio de Horas de Sueño por Horas de Uso Diario',
+        title: '2. Más horas de redes sociales, menos horas de sueño',
         xaxis: {
-            title: 'Horas de Uso Diario Promedio'
+            title: 'Horas de Uso Diario de Redes Sociales',
+            dtick: 0.5
         },
         yaxis: {
             title: 'Promedio de Horas de Sueño por Noche'

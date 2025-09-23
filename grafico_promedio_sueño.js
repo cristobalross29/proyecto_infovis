@@ -1,51 +1,69 @@
 export function createPromedioSueñoChart(data) {
-    // Filter valid data
-    const validData = data
-        .filter(d => d.Avg_Daily_Usage_Hours && d.Sleep_Hours_Per_Night)
-        .map(d => ({
-            usage: parseFloat(d.Avg_Daily_Usage_Hours),
-            sleep: parseFloat(d.Sleep_Hours_Per_Night)
-        }))
-        .filter(d => !isNaN(d.usage) && !isNaN(d.sleep));
-    
-    // Group by usage hours (rounded to 30 min) and calculate average sleep hours
-    const groupedData = {};
-    validData.forEach(d => {
-        const usageHour = Math.round(d.usage * 2) / 2;
-        if (!groupedData[usageHour]) {
-            groupedData[usageHour] = [];
-        }
-        groupedData[usageHour].push(d.sleep);
-    });
+    const MAX_HOURS = 7;
 
-    // Calculate averages for each usage hour (limit to 7 hours)
-    const averageData = Object.keys(groupedData)
-        .map(usageHour => ({
-            usage: parseFloat(usageHour),
-            avgSleep: groupedData[usageHour].reduce((sum, sleep) => sum + sleep, 0) / groupedData[usageHour].length
-        }))
-        .filter(d => d.usage <= 7)
-        .sort((a, b) => a.usage - b.usage);
+    const validData = filterValidData(data);
+    const groupedData = groupDataByUsageHours(validData);
+    const averageData = calculateAverages(groupedData);
+
+    function filterValidData(rawData) {
+        return rawData
+            .filter(entry => entry.Avg_Daily_Usage_Hours && entry.Sleep_Hours_Per_Night)
+            .map(entry => ({
+                usage: parseFloat(entry.Avg_Daily_Usage_Hours),
+                sleep: parseFloat(entry.Sleep_Hours_Per_Night)
+            }))
+            .filter(entry => !isNaN(entry.usage) && !isNaN(entry.sleep));
+    }
+
+    function groupDataByUsageHours(data) {
+        const grouped = {};
+        data.forEach(entry => {
+            const usageHour = Math.round(entry.usage * 2) / 2;
+            if (!grouped[usageHour]) {
+                grouped[usageHour] = [];
+            }
+            grouped[usageHour].push(entry.sleep);
+        });
+        return grouped;
+    }
+
+    function calculateAverages(grouped) {
+        return Object.keys(grouped)
+            .map(usageHour => ({
+                usage: parseFloat(usageHour),
+                avgSleep: calculateAverage(grouped[usageHour])
+            }))
+            .filter(entry => entry.usage <= MAX_HOURS)
+            .sort((a, b) => a.usage - b.usage);
+    }
+
+    function calculateAverage(sleepHours) {
+        return sleepHours.reduce((sum, sleep) => sum + sleep, 0) / sleepHours.length;
+    }
     
-    const trace = {
-        x: averageData.map(d => d.usage),
-        y: averageData.map(d => d.avgSleep),
-        mode: 'lines',
-        type: 'scatter',
-        line: {
-            color: 'rgba(55, 128, 191, 1.0)',
-            width: 6
-        },
-        marker: {
-            color: 'rgba(55, 128, 191, 0.8)',
-            size: 8,
+    const trace = createSleepTrace(averageData);
+
+    function createSleepTrace(data) {
+        return {
+            x: data.map(d => d.usage),
+            y: data.map(d => d.avgSleep),
+            mode: 'lines',
+            type: 'scatter',
             line: {
                 color: 'rgba(55, 128, 191, 1.0)',
-                width: 2
-            }
-        },
-        name: 'Promedio de Horas de Sueño'
-    };
+                width: 6
+            },
+            marker: {
+                color: 'rgba(55, 128, 191, 0.8)',
+                size: 8,
+                line: {
+                    color: 'rgba(55, 128, 191, 1.0)',
+                    width: 2
+                }
+            },
+            name: 'Promedio de Horas de Sueño'
+        };
+    }
     
     const layout = {
         title: {

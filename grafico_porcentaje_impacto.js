@@ -1,14 +1,16 @@
 export function createPorcentajeImpactoChart(data) {
-    // Group data by usage hours and academic impact
+    const MAX_HOURS = 7;
+    const MINUTES_INTERVAL = 0.5;
+
     const groupedData = {};
 
-    data.forEach(d => {
-        const usageHours = parseFloat(d.Avg_Daily_Usage_Hours);
-        const affectsAcademic = d.Affects_Academic_Performance;
+    data.forEach(entry => {
+        const usageHours = parseFloat(entry.Avg_Daily_Usage_Hours);
+        const affectsAcademic = entry.Affects_Academic_Performance;
 
-        if (!isNaN(usageHours) && (affectsAcademic === 'Yes' || affectsAcademic === 'No')) {
-            // Round to nearest 0.5 (30 minutes)
+        if (isValidEntry(usageHours, affectsAcademic)) {
             const roundedHours = Math.round(usageHours * 2) / 2;
+
             if (!groupedData[roundedHours]) {
                 groupedData[roundedHours] = { Yes: 0, No: 0 };
             }
@@ -16,50 +18,62 @@ export function createPorcentajeImpactoChart(data) {
         }
     });
 
-    // Sort hours and calculate percentages (limit to 7 hours)
-    const sortedHours = Object.keys(groupedData).map(h => parseFloat(h)).filter(h => h <= 7).sort((a, b) => a - b);
+    function isValidEntry(hours, affects) {
+        return !isNaN(hours) && (affects === 'Yes' || affects === 'No');
+    }
+
+    const sortedHours = Object.keys(groupedData)
+        .map(h => parseFloat(h))
+        .filter(h => h <= MAX_HOURS)
+        .sort((a, b) => a - b);
+
     const percentageAffected = sortedHours.map(hour => {
         const total = groupedData[hour].Yes + groupedData[hour].No;
         return total > 0 ? (groupedData[hour].Yes / total) * 100 : 0;
     });
 
-    // Area superior (azul) - desde la línea hasta arriba
-    const traceAreaSuperior = {
+    const traceAreaSuperior = createAreaTrace({
         x: sortedHours,
         y: percentageAffected,
         fill: 'tonexty',
-        type: 'scatter',
-        mode: 'none',
         fillcolor: 'rgba(70, 130, 180, 0.6)',
-        name: 'No afectados',
-        hoverinfo: 'skip'
-    };
+        name: 'No afectados'
+    });
 
-    // Area inferior (roja) - desde abajo hasta la línea
-    const traceAreaInferior = {
+    const traceAreaInferior = createAreaTrace({
         x: sortedHours,
         y: percentageAffected,
         fill: 'tozeroy',
-        type: 'scatter',
-        mode: 'none',
         fillcolor: 'rgba(220, 20, 60, 0.6)',
-        name: 'Afectados',
-        hoverinfo: 'skip'
-    };
+        name: 'Afectados'
+    });
 
-    // Línea negra separadora
-    const traceLine = {
+    const traceLine = createLineTrace({
         x: sortedHours,
         y: percentageAffected,
-        mode: 'lines',
-        type: 'scatter',
-        line: {
-            color: 'black',
-            width: 3
-        },
-        name: '% Afectado académicamente',
-        hovertemplate: '%{y:.1f}% afectados<extra></extra>'
-    };
+        color: 'black',
+        width: 3,
+        name: '% Afectado académicamente'
+    });
+
+    function createAreaTrace({ x, y, fill, fillcolor, name }) {
+        return {
+            x, y, fill, fillcolor, name,
+            type: 'scatter',
+            mode: 'none',
+            hoverinfo: 'skip'
+        };
+    }
+
+    function createLineTrace({ x, y, color, width, name }) {
+        return {
+            x, y, name,
+            mode: 'lines',
+            type: 'scatter',
+            line: { color, width },
+            hovertemplate: '%{y:.1f}% afectados<extra></extra>'
+        };
+    }
 
     const layout = {
         title: {

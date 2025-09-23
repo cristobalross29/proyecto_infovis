@@ -23,21 +23,42 @@ export function createPorcentajeImpactoChart(data) {
         return total > 0 ? (groupedData[hour].Yes / total) * 100 : 0;
     });
 
-    // Trace for percentage affected (single red line)
-    const tracePercentage = {
+    // Area superior (azul) - desde la línea hasta arriba
+    const traceAreaSuperior = {
+        x: sortedHours,
+        y: percentageAffected,
+        fill: 'tonexty',
+        type: 'scatter',
+        mode: 'none',
+        fillcolor: 'rgba(70, 130, 180, 0.6)',
+        name: 'No afectados',
+        hoverinfo: 'skip'
+    };
+
+    // Area inferior (roja) - desde abajo hasta la línea
+    const traceAreaInferior = {
+        x: sortedHours,
+        y: percentageAffected,
+        fill: 'tozeroy',
+        type: 'scatter',
+        mode: 'none',
+        fillcolor: 'rgba(220, 20, 60, 0.6)',
+        name: 'Afectados',
+        hoverinfo: 'skip'
+    };
+
+    // Línea negra separadora
+    const traceLine = {
         x: sortedHours,
         y: percentageAffected,
         mode: 'lines',
         type: 'scatter',
         line: {
-            color: 'red',
-            width: 6
+            color: 'black',
+            width: 3
         },
-        marker: {
-            color: 'red',
-            size: 8
-        },
-        name: '% Afectado académicamente'
+        name: '% Afectado académicamente',
+        hovertemplate: '%{y:.1f}% afectados<extra></extra>'
     };
 
     const layout = {
@@ -93,5 +114,5 @@ export function createPorcentajeImpactoChart(data) {
         }
     };
 
-    Plotly.newPlot('chartPorcentajeImpacto', [tracePercentage], layout);
+    Plotly.newPlot('chartPorcentajeImpacto', [traceAreaSuperior, traceAreaInferior, traceLine], layout);
 }

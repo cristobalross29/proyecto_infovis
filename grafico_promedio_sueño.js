@@ -30,11 +30,11 @@ export function createPromedioSueñoChart(data) {
     const trace = {
         x: averageData.map(d => d.usage),
         y: averageData.map(d => d.avgSleep),
-        mode: 'lines+markers',
+        mode: 'lines',
         type: 'scatter',
         line: {
             color: 'rgba(55, 128, 191, 1.0)',
-            width: 3
+            width: 6
         },
         marker: {
             color: 'rgba(55, 128, 191, 0.8)',
@@ -48,13 +48,45 @@ export function createPromedioSueñoChart(data) {
     };
     
     const layout = {
-        title: '2. Más horas de redes sociales, menos horas de sueño',
+        title: {
+            text: 'Impacto de las redes sociales en la calidad del sueño',
+            font: {
+                size: 41,
+                family: 'Times New Roman, serif',
+                color: '#2c3e50'
+            }
+        },
         xaxis: {
-            title: 'Horas de Uso Diario de Redes Sociales',
-            dtick: 0.5
+            title: {
+                text: 'Horas de Uso Diario de Redes Sociales',
+                font: {
+                    size: 27,
+                    family: 'Times New Roman, serif'
+                }
+            },
+            dtick: 1,
+            showgrid: false,
+            range: [0, null],
+            tickfont: {
+                size: 22,
+                family: 'Times New Roman, serif'
+            }
         },
         yaxis: {
-            title: 'Promedio de Horas de Sueño por Noche'
+            title: {
+                text: 'Promedio de Horas de Sueño por Noche',
+                font: {
+                    size: 27,
+                    family: 'Times New Roman, serif'
+                }
+            },
+            showgrid: false,
+            range: [0, 10],
+            dtick: 1,
+            tickfont: {
+                size: 22,
+                family: 'Times New Roman, serif'
+            }
         }
     };
     

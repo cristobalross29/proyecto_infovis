@@ -27,11 +27,11 @@ export function createPorcentajeImpactoChart(data) {
     const tracePercentage = {
         x: sortedHours,
         y: percentageAffected,
-        mode: 'lines+markers',
+        mode: 'lines',
         type: 'scatter',
         line: {
             color: 'red',
-            width: 3
+            width: 6
         },
         marker: {
             color: 'red',
@@ -41,15 +41,45 @@ export function createPorcentajeImpactoChart(data) {
     };
 
     const layout = {
-        title: '1. Porcentaje de estudiantes con problemas académicos por horas de uso',
+        title: {
+            text: 'Impacto de las redes sociales en el rendimiento académico',
+            font: {
+                size: 41,
+                family: 'Times New Roman, serif',
+                color: '#2c3e50'
+            }
+        },
         xaxis: {
-            title: 'Horas de Uso Diario de Redes Sociales',
-            dtick: 0.5
+            title: {
+                text: 'Horas de Uso Diario de Redes Sociales',
+                font: {
+                    size: 27,
+                    family: 'Times New Roman, serif'
+                }
+            },
+            dtick: 1,
+            showgrid: false,
+            range: [0, null],
+            tickfont: {
+                size: 22,
+                family: 'Times New Roman, serif'
+            }
         },
         yaxis: {
-            title: 'Porcentaje de Estudiantes Afectados (%)',
+            title: {
+                text: '% estudiantes afectados negativamente',
+                font: {
+                    size: 27,
+                    family: 'Times New Roman, serif'
+                }
+            },
             range: [0, 105],
-            dtick: 10
+            dtick: 10,
+            showgrid: false,
+            tickfont: {
+                size: 22,
+                family: 'Times New Roman, serif'
+            }
         },
         showlegend: true,
         legend: {

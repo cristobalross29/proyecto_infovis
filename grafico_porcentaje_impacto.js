@@ -1,3 +1,5 @@
+import { getResponsiveFontSizes, updateChartResponsiveness } from './responsiveUtils.js';
+
 export function createPorcentajeImpactoChart(data) {
     const MAX_HOURS = 7;
     const MINUTES_INTERVAL = 0.5;
@@ -121,12 +123,15 @@ export function createPorcentajeImpactoChart(data) {
         hoverinfo: 'skip'
     } : null;
 
+    // Get responsive font sizes
+    const fontSizes = getResponsiveFontSizes('chartPorcentajeImpacto');
+
     // Configuración del layout
     const layout = {
         title: {
             text: 'Impacto autoreportado del uso de redes sociales en el rendimiento académico',
             font: {
-                size: 30,
+                size: fontSizes.title,
                 family: 'Arial, sans-serif',
                 color: '#2c3e50'
             }
@@ -135,7 +140,7 @@ export function createPorcentajeImpactoChart(data) {
             title: {
                 text: 'Horas de Uso Diario',
                 font: {
-                    size: 22,
+                    size: fontSizes.axisTitle,
                     family: 'Arial, sans-serif'
                 }
             },
@@ -146,7 +151,7 @@ export function createPorcentajeImpactoChart(data) {
             linecolor: 'black',
             range: [0, null],
             tickfont: {
-                size: 17,
+                size: fontSizes.tick,
                 family: 'Arial, sans-serif'
             }
         },
@@ -154,7 +159,7 @@ export function createPorcentajeImpactoChart(data) {
             title: {
                 text: '% estudiantes afectados negativamente',
                 font: {
-                    size: 22,
+                    size: fontSizes.axisTitle,
                     family: 'Arial, sans-serif'
                 }
             },
@@ -166,7 +171,7 @@ export function createPorcentajeImpactoChart(data) {
             linecolor: 'black',
             ticklen: 8,
             tickfont: {
-                size: 17,
+                size: fontSizes.tick,
                 family: 'Arial, sans-serif'
             }
         },
@@ -184,7 +189,7 @@ export function createPorcentajeImpactoChart(data) {
                 ax: -150,
                 ay: -0,
                 font: {
-                    size: 15,
+                    size: fontSizes.annotation,
                     color: "black",
                     family: "Arial, sans-serif"
                 }
@@ -199,7 +204,7 @@ export function createPorcentajeImpactoChart(data) {
                 ax: 120,
                 ay: 0,
                 font: {
-                    size: 15,
+                    size: fontSizes.annotation,
                     color: "black",
                     family: "Arial, sans-serif"
                 }
@@ -211,7 +216,7 @@ export function createPorcentajeImpactoChart(data) {
                 text: "No Afectados",
                 showarrow: false,
                 font: {
-                    size: 35,
+                    size: fontSizes.annotationLarge,
                     color: "white",
                     family: "Arial, sans-serif"
                 }
@@ -223,7 +228,7 @@ export function createPorcentajeImpactoChart(data) {
                 text: "Afectados",
                 showarrow: false,
                 font: {
-                    size: 35,
+                    size: fontSizes.annotationLarge,
                     color: "white",
                     family: "Arial, sans-serif"
                 }
@@ -242,4 +247,7 @@ export function createPorcentajeImpactoChart(data) {
     };
 
     Plotly.newPlot('chartPorcentajeImpacto', traces, layout, config);
+
+    // Setup responsive font updates
+    updateChartResponsiveness('chartPorcentajeImpacto', document.getElementById('chartPorcentajeImpacto'));
 }

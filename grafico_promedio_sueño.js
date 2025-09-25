@@ -1,3 +1,5 @@
+import { getResponsiveFontSizes, updateChartResponsiveness } from './responsiveUtils.js';
+
 export function createPromedioSueñoChart(data) {
     const MAX_HOURS = 7;
 
@@ -71,11 +73,14 @@ export function createPromedioSueñoChart(data) {
     const sevenHourSleep = sevenHourData ? sevenHourData.avgSleep : null;
     const percentageDecrease = sevenHourSleep ? Math.round(((baselineSleep - sevenHourSleep) / baselineSleep) * 100) : 0;
     
+    // Get responsive font sizes
+    const fontSizes = getResponsiveFontSizes('chart-promedio');
+
     const layout = {
         title: {
             text: 'Impacto de las redes sociales en las horas de sueño',
             font: {
-                size: 30,
+                size: fontSizes.title,
                 family: 'Arial, sans-serif',
                 color: '#2c3e50'
             }
@@ -84,7 +89,7 @@ export function createPromedioSueñoChart(data) {
             title: {
                 text: 'Horas de Uso Diario',
                 font: {
-                    size: 22,
+                    size: fontSizes.axisTitle,
                     family: 'Arial, sans-serif'
                 }
             },
@@ -95,7 +100,7 @@ export function createPromedioSueñoChart(data) {
             linecolor: 'black',
             range: [0, null],
             tickfont: {
-                size: 17,
+                size: fontSizes.tick,
                 family: 'Arial, sans-serif'
             }
         },
@@ -103,7 +108,7 @@ export function createPromedioSueñoChart(data) {
             title: {
                 text: 'Promedio de Horas de Sueño por Noche',
                 font: {
-                    size: 22,
+                    size: fontSizes.axisTitle,
                     family: 'Arial, sans-serif'
                 }
             },
@@ -115,7 +120,7 @@ export function createPromedioSueñoChart(data) {
             dtick: 1,
             ticklen: 8,
             tickfont: {
-                size: 17,
+                size: fontSizes.tick,
                 family: 'Arial, sans-serif'
             }
         },
@@ -140,7 +145,7 @@ export function createPromedioSueñoChart(data) {
             ax: 130,
             ay: 0,
             font: {
-                size: 15,
+                size: fontSizes.annotation,
                 color: 'black',
                 family: 'Arial, sans-serif'
             },
@@ -157,7 +162,7 @@ export function createPromedioSueñoChart(data) {
             ax: -100,
             ay: 90,
             font: {
-                size: 15,
+                size: fontSizes.annotation,
                 color: 'black',
                 family: 'Arial, sans-serif'
             },
@@ -175,4 +180,7 @@ export function createPromedioSueñoChart(data) {
     };
 
     Plotly.newPlot('chart-promedio', [trace], layout, config);
+
+    // Setup responsive font updates
+    updateChartResponsiveness('chart-promedio', document.getElementById('chart-promedio'));
 }

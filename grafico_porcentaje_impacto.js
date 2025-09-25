@@ -196,12 +196,12 @@ export function createPorcentajeImpactoChart(data) {
             },
             // Mensaje para el punto donde todos están afectados (a las 5.5 horas)
             {
-                x: 5.6,  // Ajustamos la posición a la línea
+                x: 5.5,  // Ajustamos la posición a la línea
                 y: 80,
                 text: "Todos afectados <br> desde 5.5 hrs de uso",
                 showarrow: true,
                 arrowhead: 2,
-                ax: 120,
+                ax: 110,
                 ay: 0,
                 font: {
                     size: fontSizes.annotation,

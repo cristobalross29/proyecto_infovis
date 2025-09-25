@@ -157,7 +157,7 @@ export function createPromedioSueñoChart(data) {
             ax: -100,
             ay: 90,
             font: {
-                size: 18,
+                size: 20,
                 color: 'black',
                 family: 'Arial'
             },

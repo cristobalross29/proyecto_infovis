@@ -36,20 +36,20 @@ export function createPorcentajeImpactoChart(data) {
     const xVals = [0, ...sortedHours]; // Incluir 0 en las horas
     const yVals = [percentageAffected[0], ...percentageAffected]; // Añadir el primer valor de percentageAffected
 
-    // Crear la traza del área azul (para el lado izquierdo de la línea)
-    const traceAreaIzquierda = createAreaTrace({
+    // Crear la traza de fondo azul (cubre toda el área del gráfico)
+    const traceBackground = createAreaTrace({
+        x: [0, Math.max(...xVals)],
+        y: [100, 100],
+        fill: 'tozeroy',
+        fillcolor: 'rgba(70, 130, 180, 0.6)', // Azul de fondo
+        name: 'Fondo'
+    });
+
+    // Crear la traza del área roja (afectados)
+    const traceAreaAfectados = createAreaTrace({
         x: xVals,
         y: yVals,
         fill: 'tozeroy',
-        fillcolor: 'rgba(70, 130, 180, 0.6)', // Azul
-        name: 'No afectados'
-    });
-
-    // Crear la traza del área roja (para el lado derecho de la línea)
-    const traceAreaDerecha = createAreaTrace({
-        x: xVals,
-        y: yVals,
-        fill: 'tonexty',
         fillcolor: 'rgba(220, 20, 60, 0.6)', // Rojo
         name: 'Afectados'
     });
@@ -126,16 +126,7 @@ export function createPorcentajeImpactoChart(data) {
                 family: 'Times New Roman, serif'
             }
         },
-        showlegend: true,
-        legend: {
-            x: 0.1,
-            y: 1,
-            xanchor: 'left',
-            yanchor: 'top',
-            bgcolor: 'rgba(255,255,255,0.8)',
-            bordercolor: 'rgba(0,0,0,0.2)',
-            borderwidth: 1
-        },
+        showlegend: false,
         annotations: [
             // Mensaje para el punto donde nadie está afectado (antes de 2 horas)
             {
@@ -148,7 +139,7 @@ export function createPorcentajeImpactoChart(data) {
                 ay: -40,
                 font: { size: 16,
                     color: "black",
-                    family: "Arial"
+                    family: "'Times New Roman', serif"
                 }
             },
             // Mensaje para el punto donde todos están afectados (a las 5.5 horas)
@@ -163,7 +154,7 @@ export function createPorcentajeImpactoChart(data) {
                 font: {
                     size: 16,
                     color: "black",
-                    family: "Arial"
+                    family: "'Times New Roman', serif"
                 }
             },
             // Mensaje sobre el crecimiento lineal entre esos valores
@@ -178,12 +169,12 @@ export function createPorcentajeImpactoChart(data) {
                 font: {
                     size: 16,
                     color: "black",
-                    family: "Arial"
+                    family: "'Times New Roman', serif"
                 }
             }
         ]
     };
 
-    // Se actualiza el gráfico con las nuevas trazas (asegúrate de que se dibuja primero el lado izquierdo azul y luego el rojo)
-    Plotly.newPlot('chartPorcentajeImpacto', [traceAreaIzquierda, traceAreaDerecha, traceLine], layout);
+    // Se actualiza el gráfico con las nuevas trazas (fondo azul, área roja de afectados, y línea)
+    Plotly.newPlot('chartPorcentajeImpacto', [traceBackground, traceAreaAfectados, traceLine], layout);
 }

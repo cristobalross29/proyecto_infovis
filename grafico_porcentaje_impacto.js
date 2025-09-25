@@ -124,16 +124,16 @@ export function createPorcentajeImpactoChart(data) {
     // Configuración del layout
     const layout = {
         title: {
-            text: 'Impacto de las redes sociales en el rendimiento académico',
+            text: 'Impacto autoreportado del uso de redes sociales en el rendimiento académico',
             font: {
-                size: 41,
+                size: 37,
                 family: 'Arial',
                 color: '#2c3e50'
             }
         },
         xaxis: {
             title: {
-                text: 'Horas de Uso Diario de Redes Sociales',
+                text: 'Horas de Uso Diario',
                 font: {
                     size: 27,
                     family: 'Arial'
@@ -141,6 +141,9 @@ export function createPorcentajeImpactoChart(data) {
             },
             dtick: 1,
             showgrid: false,
+            showline: true,
+            linewidth: 2,
+            linecolor: 'black',
             range: [0, null],
             tickfont: {
                 size: 22,
@@ -158,6 +161,10 @@ export function createPorcentajeImpactoChart(data) {
             range: [0, 105],
             dtick: 10,
             showgrid: false,
+            showline: true,
+            linewidth: 2,
+            linecolor: 'black',
+            ticklen: 8,
             tickfont: {
                 size: 22,
                 family: 'Arial'

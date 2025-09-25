@@ -69,14 +69,14 @@ export function createPromedioSueñoChart(data) {
         title: {
             text: 'Impacto de las redes sociales en la calidad del sueño',
             font: {
-                size: 41,
+                size: 37,
                 family: 'Arial, sans-serif',
                 color: '#2c3e50'
             }
         },
         xaxis: {
             title: {
-                text: 'Horas de Uso Diario de Redes Sociales',
+                text: 'Horas de Uso Diario',
                 font: {
                     size: 27,
                     family: 'Arial, sans-serif'
@@ -84,6 +84,9 @@ export function createPromedioSueñoChart(data) {
             },
             dtick: 1,
             showgrid: false,
+            showline: true,
+            linewidth: 2,
+            linecolor: 'black',
             range: [0, null],
             tickfont: {
                 size: 22,
@@ -99,8 +102,12 @@ export function createPromedioSueñoChart(data) {
                 }
             },
             showgrid: false,
+            showline: true,
+            linewidth: 2,
+            linecolor: 'black',
             range: [0, 10],
             dtick: 1,
+            ticklen: 8,
             tickfont: {
                 size: 22,
                 family: 'Arial, sans-serif'

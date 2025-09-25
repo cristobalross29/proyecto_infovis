@@ -64,10 +64,16 @@ export function createPromedioSueñoChart(data) {
             name: 'Promedio de Horas de Sueño'
         };
     }
+
+    // Calculate percentage decrease from baseline to 7 hours
+    const baselineSleep = averageData.length > 0 ? averageData[0].avgSleep : 8;
+    const sevenHourData = averageData.find(d => d.usage === 7);
+    const sevenHourSleep = sevenHourData ? sevenHourData.avgSleep : null;
+    const percentageDecrease = sevenHourSleep ? Math.round(((baselineSleep - sevenHourSleep) / baselineSleep) * 100) : 0;
     
     const layout = {
         title: {
-            text: 'Impacto de las redes sociales en la calidad del sueño',
+            text: 'Impacto de las redes sociales en las horas de sueño',
             font: {
                 size: 37,
                 family: 'Arial, sans-serif',
@@ -112,7 +118,53 @@ export function createPromedioSueñoChart(data) {
                 size: 22,
                 family: 'Arial, sans-serif'
             }
-        }
+        },
+        shapes: [{
+            type: 'line',
+            x0: 4,
+            x1: 4,
+            y0: 0,
+            y1: 10,
+            line: {
+                color: 'red',
+                width: 2,
+                dash: 'dash'
+            }
+        }],
+        annotations: [{
+            x: 4.1,
+            y: 4.5,
+            text: 'A partir de 4h<br> se nota una caída<br> en las horas de sueño',
+            showarrow: true,
+            arrowhead: 2,
+            ax: 130,
+            ay: 0,
+            font: {
+                size: 20,
+                color: 'black',
+                family: 'Arial'
+            },
+            // bgcolor: 'rgba(255, 255, 255, 0.9)',
+            // bordercolor: 'red',
+            // borderwidth: 1
+        }, 
+        {
+            x: 6.98,
+            y: sevenHourSleep - 0.1,
+            text: `A las 7hrs se registra<br>una disminución del<br>${percentageDecrease}% en las hrs de sueño`,
+            showarrow: true,
+            arrowhead: 2,
+            ax: -100,
+            ay: 90,
+            font: {
+                size: 18,
+                color: 'black',
+                family: 'Arial'
+            },
+            // bgcolor: 'rgba(255, 255, 255, 0.9)',
+            // bordercolor: 'black',
+            // borderwidth: 1
+        }]
     };
     
     Plotly.newPlot('chart-promedio', [trace], layout);

@@ -174,13 +174,13 @@ export function createPorcentajeImpactoChart(data) {
         annotations: [
             // Mensaje para el punto donde nadie está afectado (antes de 2 horas)
             {
-                x: 2.45,
+                x: 2.3,
                 y: 80,
-                text: "Nadie afectado",
+                text: "Nadie afectado <br> hasta 2.5hrs de uso",
                 showarrow: true,
                 arrowhead: 26,
-                ax: -100,
-                ay: -3,
+                ax: -150,
+                ay: -0,
                 font: {
                     size: 20,
                     color: "black",
@@ -189,12 +189,12 @@ export function createPorcentajeImpactoChart(data) {
             },
             // Mensaje para el punto donde todos están afectados (a las 5.5 horas)
             {
-                x: 5.5,  // Ajustamos la posición a la línea
+                x: 5.6,  // Ajustamos la posición a la línea
                 y: 80,
-                text: "Todos afectados",
+                text: "Todos afectados <br> desde 5.5 hrs de uso",
                 showarrow: true,
                 arrowhead: 2,
-                ax: 100,
+                ax: 120,
                 ay: 0,
                 font: {
                     size: 20,

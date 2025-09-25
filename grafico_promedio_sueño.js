@@ -70,7 +70,7 @@ export function createPromedioSueñoChart(data) {
             text: 'Impacto de las redes sociales en la calidad del sueño',
             font: {
                 size: 41,
-                family: 'Times New Roman, serif',
+                family: 'Arial, sans-serif',
                 color: '#2c3e50'
             }
         },
@@ -79,7 +79,7 @@ export function createPromedioSueñoChart(data) {
                 text: 'Horas de Uso Diario de Redes Sociales',
                 font: {
                     size: 27,
-                    family: 'Times New Roman, serif'
+                    family: 'Arial, sans-serif'
                 }
             },
             dtick: 1,
@@ -87,7 +87,7 @@ export function createPromedioSueñoChart(data) {
             range: [0, null],
             tickfont: {
                 size: 22,
-                family: 'Times New Roman, serif'
+                family: 'Arial, sans-serif'
             }
         },
         yaxis: {
@@ -95,7 +95,7 @@ export function createPromedioSueñoChart(data) {
                 text: 'Promedio de Horas de Sueño por Noche',
                 font: {
                     size: 27,
-                    family: 'Times New Roman, serif'
+                    family: 'Arial, sans-serif'
                 }
             },
             showgrid: false,
@@ -103,7 +103,7 @@ export function createPromedioSueñoChart(data) {
             dtick: 1,
             tickfont: {
                 size: 22,
-                family: 'Times New Roman, serif'
+                family: 'Arial, sans-serif'
             }
         }
     };

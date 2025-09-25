@@ -84,13 +84,50 @@ export function createPorcentajeImpactoChart(data) {
         };
     }
 
+    // Línea vertical fija en x=2.5 para marcar el punto de 0%
+    const firstNonZeroX = 2.5;
+
+    // Encontrar el punto donde el porcentaje llega al 100%
+    const hundredPercentIndex = yVals.findIndex(y => y >= 100);
+    const hundredPercentX = hundredPercentIndex !== -1 ? xVals[hundredPercentIndex] : null;
+
+    // Línea vertical donde comienza el impacto (en x=2.5)
+    const verticalLineStart = {
+        x: [firstNonZeroX, firstNonZeroX],
+        y: [0, 105],
+        mode: 'lines',
+        type: 'scatter',
+        line: {
+            color: 'white',
+            width: 2,
+            dash: 'dash'
+        },
+        name: 'Inicio del impacto',
+        hoverinfo: 'skip'
+    };
+
+    // Línea vertical donde llega al 100%
+    const verticalLineEnd = hundredPercentX ? {
+        x: [hundredPercentX, hundredPercentX],
+        y: [0, 105],
+        mode: 'lines',
+        type: 'scatter',
+        line: {
+            color: 'white',
+            width: 2,
+            dash: 'dash'
+        },
+        name: 'Impacto total',
+        hoverinfo: 'skip'
+    } : null;
+
     // Configuración del layout
     const layout = {
         title: {
             text: 'Impacto de las redes sociales en el rendimiento académico',
             font: {
                 size: 41,
-                family: 'Times New Roman, serif',
+                family: 'Arial',
                 color: '#2c3e50'
             }
         },
@@ -99,7 +136,7 @@ export function createPorcentajeImpactoChart(data) {
                 text: 'Horas de Uso Diario de Redes Sociales',
                 font: {
                     size: 27,
-                    family: 'Times New Roman, serif'
+                    family: 'Arial'
                 }
             },
             dtick: 1,
@@ -107,7 +144,7 @@ export function createPorcentajeImpactoChart(data) {
             range: [0, null],
             tickfont: {
                 size: 22,
-                family: 'Times New Roman, serif'
+                family: 'Arial'
             }
         },
         yaxis: {
@@ -115,7 +152,7 @@ export function createPorcentajeImpactoChart(data) {
                 text: '% estudiantes afectados negativamente',
                 font: {
                     size: 27,
-                    family: 'Times New Roman, serif'
+                    family: 'Arial'
                 }
             },
             range: [0, 105],
@@ -123,58 +160,72 @@ export function createPorcentajeImpactoChart(data) {
             showgrid: false,
             tickfont: {
                 size: 22,
-                family: 'Times New Roman, serif'
+                family: 'Arial'
             }
         },
         showlegend: false,
         annotations: [
             // Mensaje para el punto donde nadie está afectado (antes de 2 horas)
             {
-                x: 2.5,
-                y: 0,
-                text: "Nadie afectado antes de 2.5 horas",
+                x: 2.45,
+                y: 80,
+                text: "Nadie afectado",
                 showarrow: true,
-                arrowhead: 2,
-                ax: 10,
-                ay: -40,
-                font: { size: 16,
+                arrowhead: 26,
+                ax: -100,
+                ay: -3,
+                font: {
+                    size: 20,
                     color: "black",
-                    family: "'Times New Roman', serif"
+                    family: "Arial"
                 }
             },
             // Mensaje para el punto donde todos están afectados (a las 5.5 horas)
             {
                 x: 5.5,  // Ajustamos la posición a la línea
-                y: 100,
-                text: "Todos afectados después de 5.5 horas",
+                y: 80,
+                text: "Todos afectados",
                 showarrow: true,
                 arrowhead: 2,
-                ax: 10,
-                ay: -40,
+                ax: 100,
+                ay: 0,
                 font: {
-                    size: 16,
+                    size: 20,
                     color: "black",
-                    family: "'Times New Roman', serif"
+                    family: "Arial"
                 }
             },
-            // Mensaje sobre el crecimiento lineal entre esos valores
+            // Etiqueta "No Afectados" en el área azul
             {
-                x: 4.3,  // Colocamos este mensaje entre 2.5 y 5.5 horas, más cerca de la línea
+                x: 1.5,
                 y: 50,
-                text: "Crecimiento lineal entre 2.5 y 5.5 horas",
-                showarrow: true,
-                arrowhead: 2,
-                ax: 10,
-                ay: -40,
+                text: "No Afectados",
+                showarrow: false,
                 font: {
-                    size: 16,
-                    color: "black",
-                    family: "'Times New Roman', serif"
+                    size: 40,
+                    color: "white",
+                    family: "Arial"
+                }
+            },
+            // Etiqueta "Afectados" en el área roja
+            {
+                x: 6.3,
+                y: 50,
+                text: "Afectados",
+                showarrow: false,
+                font: {
+                    size: 40,
+                    color: "white",
+                    family: "Arial"
                 }
             }
         ]
     };
 
-    // Se actualiza el gráfico con las nuevas trazas (fondo azul, área roja de afectados, y línea)
-    Plotly.newPlot('chartPorcentajeImpacto', [traceBackground, traceAreaAfectados, traceLine], layout);
+    // Se actualiza el gráfico con las nuevas trazas (fondo azul, área roja de afectados, línea y líneas verticales)
+    const traces = [traceBackground, traceAreaAfectados, traceLine];
+    traces.push(verticalLineStart);
+    if (verticalLineEnd) traces.push(verticalLineEnd);
+
+    Plotly.newPlot('chartPorcentajeImpacto', traces, layout);
 }

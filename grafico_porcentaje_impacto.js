@@ -126,8 +126,8 @@ export function createPorcentajeImpactoChart(data) {
         title: {
             text: 'Impacto autoreportado del uso de redes sociales en el rendimiento académico',
             font: {
-                size: 37,
-                family: 'Arial',
+                size: 30,
+                family: 'Arial, sans-serif',
                 color: '#2c3e50'
             }
         },
@@ -135,8 +135,8 @@ export function createPorcentajeImpactoChart(data) {
             title: {
                 text: 'Horas de Uso Diario',
                 font: {
-                    size: 27,
-                    family: 'Arial'
+                    size: 22,
+                    family: 'Arial, sans-serif'
                 }
             },
             dtick: 1,
@@ -146,16 +146,16 @@ export function createPorcentajeImpactoChart(data) {
             linecolor: 'black',
             range: [0, null],
             tickfont: {
-                size: 22,
-                family: 'Arial'
+                size: 17,
+                family: 'Arial, sans-serif'
             }
         },
         yaxis: {
             title: {
                 text: '% estudiantes afectados negativamente',
                 font: {
-                    size: 27,
-                    family: 'Arial'
+                    size: 22,
+                    family: 'Arial, sans-serif'
                 }
             },
             range: [0, 105],
@@ -166,11 +166,13 @@ export function createPorcentajeImpactoChart(data) {
             linecolor: 'black',
             ticklen: 8,
             tickfont: {
-                size: 22,
-                family: 'Arial'
+                size: 17,
+                family: 'Arial, sans-serif'
             }
         },
         showlegend: false,
+        autosize: true,
+        margin: { l: 150, r: 80, t: 180, b: 120 },
         annotations: [
             // Mensaje para el punto donde nadie está afectado (antes de 2 horas)
             {
@@ -182,9 +184,9 @@ export function createPorcentajeImpactoChart(data) {
                 ax: -150,
                 ay: -0,
                 font: {
-                    size: 20,
+                    size: 15,
                     color: "black",
-                    family: "Arial"
+                    family: "Arial, sans-serif"
                 }
             },
             // Mensaje para el punto donde todos están afectados (a las 5.5 horas)
@@ -197,9 +199,9 @@ export function createPorcentajeImpactoChart(data) {
                 ax: 120,
                 ay: 0,
                 font: {
-                    size: 20,
+                    size: 15,
                     color: "black",
-                    family: "Arial"
+                    family: "Arial, sans-serif"
                 }
             },
             // Etiqueta "No Afectados" en el área azul
@@ -209,9 +211,9 @@ export function createPorcentajeImpactoChart(data) {
                 text: "No Afectados",
                 showarrow: false,
                 font: {
-                    size: 40,
+                    size: 35,
                     color: "white",
-                    family: "Arial"
+                    family: "Arial, sans-serif"
                 }
             },
             // Etiqueta "Afectados" en el área roja
@@ -221,9 +223,9 @@ export function createPorcentajeImpactoChart(data) {
                 text: "Afectados",
                 showarrow: false,
                 font: {
-                    size: 40,
+                    size: 35,
                     color: "white",
-                    family: "Arial"
+                    family: "Arial, sans-serif"
                 }
             }
         ]
@@ -234,5 +236,10 @@ export function createPorcentajeImpactoChart(data) {
     traces.push(verticalLineStart);
     if (verticalLineEnd) traces.push(verticalLineEnd);
 
-    Plotly.newPlot('chartPorcentajeImpacto', traces, layout);
+    const config = {
+        responsive: true,
+        displayModeBar: false
+    };
+
+    Plotly.newPlot('chartPorcentajeImpacto', traces, layout, config);
 }

@@ -75,7 +75,7 @@ export function createPromedioSueñoChart(data) {
         title: {
             text: 'Impacto de las redes sociales en las horas de sueño',
             font: {
-                size: 37,
+                size: 30,
                 family: 'Arial, sans-serif',
                 color: '#2c3e50'
             }
@@ -84,7 +84,7 @@ export function createPromedioSueñoChart(data) {
             title: {
                 text: 'Horas de Uso Diario',
                 font: {
-                    size: 27,
+                    size: 22,
                     family: 'Arial, sans-serif'
                 }
             },
@@ -95,7 +95,7 @@ export function createPromedioSueñoChart(data) {
             linecolor: 'black',
             range: [0, null],
             tickfont: {
-                size: 22,
+                size: 17,
                 family: 'Arial, sans-serif'
             }
         },
@@ -103,7 +103,7 @@ export function createPromedioSueñoChart(data) {
             title: {
                 text: 'Promedio de Horas de Sueño por Noche',
                 font: {
-                    size: 27,
+                    size: 22,
                     family: 'Arial, sans-serif'
                 }
             },
@@ -115,7 +115,7 @@ export function createPromedioSueñoChart(data) {
             dtick: 1,
             ticklen: 8,
             tickfont: {
-                size: 22,
+                size: 17,
                 family: 'Arial, sans-serif'
             }
         },
@@ -140,9 +140,9 @@ export function createPromedioSueñoChart(data) {
             ax: 130,
             ay: 0,
             font: {
-                size: 20,
+                size: 15,
                 color: 'black',
-                family: 'Arial'
+                family: 'Arial, sans-serif'
             },
             // bgcolor: 'rgba(255, 255, 255, 0.9)',
             // bordercolor: 'red',
@@ -157,15 +157,22 @@ export function createPromedioSueñoChart(data) {
             ax: -100,
             ay: 90,
             font: {
-                size: 20,
+                size: 15,
                 color: 'black',
-                family: 'Arial'
+                family: 'Arial, sans-serif'
             },
             // bgcolor: 'rgba(255, 255, 255, 0.9)',
             // bordercolor: 'black',
             // borderwidth: 1
-        }]
+        }],
+        autosize: true,
+        margin: { l: 150, r: 80, t: 180, b: 120 }
     };
     
-    Plotly.newPlot('chart-promedio', [trace], layout);
+    const config = {
+        responsive: true,
+        displayModeBar: false
+    };
+
+    Plotly.newPlot('chart-promedio', [trace], layout, config);
 }

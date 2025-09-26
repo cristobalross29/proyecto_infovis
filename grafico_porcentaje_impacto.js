@@ -132,7 +132,7 @@ export function createPorcentajeImpactoChart(data) {
             text: 'Impacto autoreportado del uso de redes sociales en el rendimiento académico',
             font: {
                 size: fontSizes.title,
-                family: 'Arial, sans-serif',
+                family: 'Arial',
                 color: '#2c3e50'
             }
         },
@@ -141,7 +141,7 @@ export function createPorcentajeImpactoChart(data) {
                 text: 'Horas de Uso Diario',
                 font: {
                     size: fontSizes.axisTitle,
-                    family: 'Arial, sans-serif'
+                    family: 'Arial'
                 }
             },
             dtick: 1,
@@ -152,7 +152,7 @@ export function createPorcentajeImpactoChart(data) {
             range: [0, null],
             tickfont: {
                 size: fontSizes.tick,
-                family: 'Arial, sans-serif'
+                family: 'Arial'
             }
         },
         yaxis: {
@@ -160,7 +160,7 @@ export function createPorcentajeImpactoChart(data) {
                 text: '% estudiantes afectados negativamente',
                 font: {
                     size: fontSizes.axisTitle,
-                    family: 'Arial, sans-serif'
+                    family: 'Arial'
                 }
             },
             range: [0, 105],
@@ -172,7 +172,7 @@ export function createPorcentajeImpactoChart(data) {
             ticklen: 8,
             tickfont: {
                 size: fontSizes.tick,
-                family: 'Arial, sans-serif'
+                family: 'Arial'
             }
         },
         showlegend: false,
@@ -183,7 +183,7 @@ export function createPorcentajeImpactoChart(data) {
             {
                 x: 2.3,
                 y: 80,
-                text: "Nadie afectado <br> hasta 2.5hrs de uso",
+                text: "Nadie afectado <br> hasta 2.5 hrs de uso",
                 showarrow: true,
                 arrowhead: 26,
                 ax: -150,
@@ -191,7 +191,7 @@ export function createPorcentajeImpactoChart(data) {
                 font: {
                     size: fontSizes.annotation,
                     color: "black",
-                    family: "Arial, sans-serif"
+                    family: "Arial"
                 }
             },
             // Mensaje para el punto donde todos están afectados (a las 5.5 horas)
@@ -206,7 +206,7 @@ export function createPorcentajeImpactoChart(data) {
                 font: {
                     size: fontSizes.annotation,
                     color: "black",
-                    family: "Arial, sans-serif"
+                    family: "Arial"
                 }
             },
             // Etiqueta "No Afectados" en el área azul
@@ -218,7 +218,7 @@ export function createPorcentajeImpactoChart(data) {
                 font: {
                     size: fontSizes.annotationLarge,
                     color: "white",
-                    family: "Arial, sans-serif"
+                    family: "Arial"
                 }
             },
             // Etiqueta "Afectados" en el área roja
@@ -230,7 +230,7 @@ export function createPorcentajeImpactoChart(data) {
                 font: {
                     size: fontSizes.annotationLarge,
                     color: "white",
-                    family: "Arial, sans-serif"
+                    family: "Arial"
                 }
             }
         ]

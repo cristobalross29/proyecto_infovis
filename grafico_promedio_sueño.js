@@ -81,7 +81,7 @@ export function createPromedioSueñoChart(data) {
             text: 'Impacto de las redes sociales en las horas de sueño',
             font: {
                 size: fontSizes.title,
-                family: 'Arial, sans-serif',
+                family: 'Arial',
                 color: '#2c3e50'
             }
         },
@@ -90,7 +90,7 @@ export function createPromedioSueñoChart(data) {
                 text: 'Horas de Uso Diario',
                 font: {
                     size: fontSizes.axisTitle,
-                    family: 'Arial, sans-serif'
+                    family: 'Arial'
                 }
             },
             dtick: 1,
@@ -101,7 +101,7 @@ export function createPromedioSueñoChart(data) {
             range: [0, null],
             tickfont: {
                 size: fontSizes.tick,
-                family: 'Arial, sans-serif'
+                family: 'Arial'
             }
         },
         yaxis: {
@@ -109,7 +109,7 @@ export function createPromedioSueñoChart(data) {
                 text: 'Promedio de Horas de Sueño por Noche',
                 font: {
                     size: fontSizes.axisTitle,
-                    family: 'Arial, sans-serif'
+                    family: 'Arial'
                 }
             },
             showgrid: false,
@@ -121,7 +121,7 @@ export function createPromedioSueñoChart(data) {
             ticklen: 8,
             tickfont: {
                 size: fontSizes.tick,
-                family: 'Arial, sans-serif'
+                family: 'Arial'
             }
         },
         shapes: [{
@@ -139,7 +139,7 @@ export function createPromedioSueñoChart(data) {
         annotations: [{
             x: 4.1,
             y: 4.5,
-            text: 'A partir de 4h<br> se nota una caída<br> en las horas de sueño',
+            text: 'A partir de 4 hrs<br> se nota una caída<br> en las horas de sueño',
             showarrow: true,
             arrowhead: 2,
             ax: 130,
@@ -147,7 +147,7 @@ export function createPromedioSueñoChart(data) {
             font: {
                 size: fontSizes.annotation,
                 color: 'black',
-                family: 'Arial, sans-serif'
+                family: 'Arial'
             },
             // bgcolor: 'rgba(255, 255, 255, 0.9)',
             // bordercolor: 'red',
@@ -156,7 +156,7 @@ export function createPromedioSueñoChart(data) {
         {
             x: 6.98,
             y: sevenHourSleep - 0.1,
-            text: `A las 7hrs se registra<br>una disminución del<br>${percentageDecrease}% en las hrs de sueño`,
+            text: `A las 7 hrs se registra<br>una disminución del<br>${percentageDecrease}% en las hrs de sueño`,
             showarrow: true,
             arrowhead: 2,
             ax: -100,
@@ -164,7 +164,7 @@ export function createPromedioSueñoChart(data) {
             font: {
                 size: fontSizes.annotation,
                 color: 'black',
-                family: 'Arial, sans-serif'
+                family: 'Arial'
             },
             // bgcolor: 'rgba(255, 255, 255, 0.9)',
             // bordercolor: 'black',

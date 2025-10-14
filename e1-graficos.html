@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>¿Cuántas horas en redes socilaes son demasiadas?</title>
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: white;
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 20px;
+            font-size: 55.35px;
+            font-family: Arial, sans-serif;
+            color: #2c3e50;
+        }
+
+        .chart-container {
+            background: white;
+            margin: 20px auto;
+            padding: 15px;
+            border-radius: 10px;
+            width: 90%;
+        }
+
+        .chart {
+            width: 90%;
+            aspect-ratio: 16/10;
+            margin: 0 auto;
+        }
+    </style>
+</head>
+<body>
+    <h1>¿Cuántas horas en redes son demasiadas?</h1>
+
+    <div class="chart-container">
+        <div id="chartPorcentajeImpacto" class="chart"></div>
+    </div>
+
+    <div class="chart-container">
+        <div id="chart-promedio" class="chart"></div>
+    </div>
+
+    <script type="module" src="main.js"></script>
+</body>
+</html>

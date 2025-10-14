@@ -15,6 +15,7 @@
     "chart.js": "^4.5.0",
     "d3": "^7.9.0",
     "live-server": "^1.2.2",
-    "plotly.js-dist": "^3.1.0"
+    "plotly.js-dist": "^3.1.0",
+    "tone": "^15.1.22"
   }
 }

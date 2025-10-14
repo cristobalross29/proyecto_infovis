@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sonificación: Adicción vs Conflictos</title>
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.8.49/Tone.js"></script>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f5f5f5;
+            padding: 20px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        h1 {
+            font-size: 45px;
+            color: #2c3e50;
+            margin-bottom: 10px;
+        }
+
+        .back-btn {
+            display: inline-block;
+            padding: 10px 20px;
+            background-color: #3498db;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            font-weight: bold;
+            transition: background-color 0.3s;
+            margin-bottom: 20px;
+        }
+
+        .back-btn:hover {
+            background-color: #2980b9;
+        }
+
+        .description {
+            max-width: 900px;
+            margin: 0 auto 30px;
+            padding: 20px;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .description h2 {
+            color: #2c3e50;
+            margin-bottom: 15px;
+        }
+
+        .description p {
+            color: #666;
+            line-height: 1.8;
+            margin-bottom: 10px;
+        }
+
+        .description ul {
+            color: #666;
+            margin-left: 20px;
+            line-height: 1.8;
+        }
+
+        .chart-container {
+            background: white;
+            margin: 20px auto;
+            padding: 30px;
+            border-radius: 10px;
+            max-width: 1200px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .chart {
+            width: 100%;
+            aspect-ratio: 16/10;
+            margin: 0 auto;
+        }
+
+        .audio-controls {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 15px;
+            margin: 20px 0;
+            padding: 15px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 8px;
+        }
+
+        .audio-btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 25px;
+            font-size: 14px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.2);
+        }
+
+        .audio-btn-play {
+            background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+            color: white;
+        }
+
+        .audio-btn-play:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(0,0,0,0.3);
+        }
+
+        .audio-btn-play:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .audio-btn-stop {
+            background: linear-gradient(135deg, #eb3349 0%, #f45c43 100%);
+            color: white;
+        }
+
+        .audio-btn-stop:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(0,0,0,0.3);
+        }
+
+        .audio-info {
+            color: white;
+            font-size: 14px;
+            font-weight: bold;
+            padding: 8px 16px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 15px;
+            backdrop-filter: blur(10px);
+        }
+
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 32px;
+            }
+
+            .audio-controls {
+                flex-direction: column;
+            }
+
+            .audio-btn {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <a href="index.html" class="back-btn">← Volver a Inicio</a>
+        <h1>🎵 Sonificación de Datos</h1>
+    </div>
+
+    <div class="description">
+        <h2>¿Cómo funciona esta visualización sonora?</h2>
+        <p>
+            Esta es una <strong>sonificación de datos</strong>: convertimos información en sonido para contar una historia
+            sobre la relación entre la adicción a redes sociales y los conflictos interpersonales.
+        </p>
+        <h3 style="margin-top: 20px; margin-bottom: 10px; color: #2c3e50;">Elementos sonoros:</h3>
+        <ul>
+            <li><strong>Tono base:</strong> Aumenta de frecuencia (más agudo) con el nivel de adicción</li>
+            <li><strong>Disonancia:</strong> Armonías "incómodas" aparecen en altos niveles de adicción</li>
+            <li><strong>Distorsión:</strong> Se intensifica con el número de conflictos</li>
+            <li><strong>Ruido de fondo:</strong> Representa el "caos" de los conflictos</li>
+            <li><strong>Latidos cardíacos:</strong> Se aceleran simulando el estrés por adicción</li>
+        </ul>
+        <p style="margin-top: 15px;">
+            <strong>Instrucciones:</strong> Presiona "Reproducir" y observa cómo cada punto del gráfico se ilumina
+            mientras suena. El viaje sonoro va desde baja adicción (tonos claros y relajados) hasta alta adicción
+            (tonos distorsionados y tensos).
+        </p>
+    </div>
+
+    <div class="chart-container">
+        <h2 style="text-align: center; color: #2c3e50; margin-bottom: 20px;">
+            Relación entre Adicción y Conflictos
+        </h2>
+
+        <div class="audio-controls">
+            <button id="play-btn" class="audio-btn audio-btn-play">
+                ▶️ Reproducir Sonificación
+            </button>
+            <button id="stop-btn" class="audio-btn audio-btn-stop">
+                ⏹️ Detener
+            </button>
+            <div id="audio-status" class="audio-info">Listo para reproducir</div>
+        </div>
+
+        <div id="chart-adiccion-conflictos" class="chart"></div>
+    </div>
+
+    <script type="module" src="mainSonification.js"></script>
+</body>
+</html>

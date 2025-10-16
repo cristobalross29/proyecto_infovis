@@ -84,40 +84,36 @@ export class FilterUI {
     }
 
     setupEventListeners() {
-        // Age sliders
+        // Age selectors
         const ageMin = document.getElementById('age-min');
         const ageMax = document.getElementById('age-max');
 
-        ageMin.addEventListener('input', () => {
+        ageMin.addEventListener('change', () => {
             if (parseInt(ageMin.value) > parseInt(ageMax.value)) {
-                ageMin.value = ageMax.value;
-            }
-            this.updateAgeDisplay();
-        });
-
-        ageMax.addEventListener('input', () => {
-            if (parseInt(ageMax.value) < parseInt(ageMin.value)) {
                 ageMax.value = ageMin.value;
             }
-            this.updateAgeDisplay();
         });
 
-        // Conflicts sliders
+        ageMax.addEventListener('change', () => {
+            if (parseInt(ageMax.value) < parseInt(ageMin.value)) {
+                ageMin.value = ageMax.value;
+            }
+        });
+
+        // Conflicts selectors
         const conflictsMin = document.getElementById('conflicts-min');
         const conflictsMax = document.getElementById('conflicts-max');
 
-        conflictsMin.addEventListener('input', () => {
+        conflictsMin.addEventListener('change', () => {
             if (parseInt(conflictsMin.value) > parseInt(conflictsMax.value)) {
-                conflictsMin.value = conflictsMax.value;
-            }
-            this.updateConflictsDisplay();
-        });
-
-        conflictsMax.addEventListener('input', () => {
-            if (parseInt(conflictsMax.value) < parseInt(conflictsMin.value)) {
                 conflictsMax.value = conflictsMin.value;
             }
-            this.updateConflictsDisplay();
+        });
+
+        conflictsMax.addEventListener('change', () => {
+            if (parseInt(conflictsMax.value) < parseInt(conflictsMin.value)) {
+                conflictsMin.value = conflictsMax.value;
+            }
         });
 
         // Apply filters button
@@ -131,21 +127,7 @@ export class FilterUI {
         });
     }
 
-    updateAgeDisplay() {
-        const min = document.getElementById('age-min').value;
-        const max = document.getElementById('age-max').value;
-        document.getElementById('age-range-display').textContent = `${min} - ${max}`;
-    }
-
-    updateConflictsDisplay() {
-        const min = document.getElementById('conflicts-min').value;
-        const max = document.getElementById('conflicts-max').value;
-        document.getElementById('conflicts-range-display').textContent = `${min} - ${max}`;
-    }
-
     updateDisplayValues() {
-        this.updateAgeDisplay();
-        this.updateConflictsDisplay();
         this.updateDataInfo();
     }
 
@@ -182,7 +164,7 @@ export class FilterUI {
     }
 
     resetFilters() {
-        // Reset age sliders
+        // Reset age selectors
         document.getElementById('age-min').value = 18;
         document.getElementById('age-max').value = 24;
 
@@ -190,7 +172,7 @@ export class FilterUI {
         document.getElementById('gender-male').checked = true;
         document.getElementById('gender-female').checked = true;
 
-        // Reset conflicts sliders
+        // Reset conflicts selectors
         document.getElementById('conflicts-min').value = 0;
         document.getElementById('conflicts-max').value = 5;
 

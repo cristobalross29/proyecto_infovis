@@ -72,6 +72,18 @@ export function createPromedioSueñoChart(data) {
     const sevenHourData = averageData.find(d => d.usage === 7);
     const sevenHourSleep = sevenHourData ? sevenHourData.avgSleep : null;
     const percentageDecrease = sevenHourSleep ? Math.round(((baselineSleep - sevenHourSleep) / baselineSleep) * 100) : 0;
+
+    // Encontrar dinámicamente el punto donde comienza la mayor caída en el sueño
+    let maxDecreasePoint = 4; // valor por defecto
+    let maxDecrease = 0;
+
+    for (let i = 1; i < averageData.length; i++) {
+        const decrease = averageData[i-1].avgSleep - averageData[i].avgSleep;
+        if (decrease > maxDecrease) {
+            maxDecrease = decrease;
+            maxDecreasePoint = averageData[i].usage;
+        }
+    }
     
     // Get responsive font sizes
     const fontSizes = getResponsiveFontSizes('chart-promedio');
@@ -126,8 +138,8 @@ export function createPromedioSueñoChart(data) {
         },
         shapes: [{
             type: 'line',
-            x0: 4,
-            x1: 4,
+            x0: maxDecreasePoint,
+            x1: maxDecreasePoint,
             y0: 0,
             y1: 10,
             line: {
@@ -137,9 +149,9 @@ export function createPromedioSueñoChart(data) {
             }
         }],
         annotations: [{
-            x: 4.1,
+            x: maxDecreasePoint + 0.1,
             y: 4.5,
-            text: 'A partir de 4 hrs<br> se nota una caída<br> en las horas de sueño',
+            text: `A partir de ${maxDecreasePoint.toFixed(1)} hrs<br> se nota una caída<br> en las horas de sueño`,
             showarrow: true,
             arrowhead: 2,
             ax: 130,
@@ -148,12 +160,9 @@ export function createPromedioSueñoChart(data) {
                 size: fontSizes.annotation,
                 color: 'black',
                 family: 'Arial'
-            },
-            // bgcolor: 'rgba(255, 255, 255, 0.9)',
-            // bordercolor: 'red',
-            // borderwidth: 1
-        }, 
-        {
+            }
+        },
+        ...(sevenHourSleep ? [{
             x: 6.98,
             y: sevenHourSleep - 0.1,
             text: `A las 7 hrs se registra<br>una disminución del<br>${percentageDecrease}% en las hrs de sueño`,
@@ -165,11 +174,8 @@ export function createPromedioSueñoChart(data) {
                 size: fontSizes.annotation,
                 color: 'black',
                 family: 'Arial'
-            },
-            // bgcolor: 'rgba(255, 255, 255, 0.9)',
-            // bordercolor: 'black',
-            // borderwidth: 1
-        }],
+            }
+        }] : [])],
         autosize: true,
         margin: { l: 150, r: 80, t: 180, b: 120 }
     };

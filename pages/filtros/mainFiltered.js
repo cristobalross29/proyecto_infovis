@@ -1,4 +1,4 @@
-import { loadCSVData } from './dataLoader.js';
+import { loadCSVData } from '../../dataLoader.js';
 import { createPromedioSueñoChart } from './grafico_promedio_sueño.js';
 import { createPorcentajeImpactoChart } from './grafico_porcentaje_impacto.js';
 import { DataFilters, FilterUI } from './filters.js';

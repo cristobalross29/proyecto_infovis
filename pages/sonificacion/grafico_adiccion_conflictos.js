@@ -1,4 +1,4 @@
-import { getResponsiveFontSizes, updateChartResponsiveness } from './responsiveUtils.js';
+import { getResponsiveFontSizes, updateChartResponsiveness } from '../../responsiveUtils.js';
 
 export function createAdiccionConflictosChart(data) {
     // Group data by addiction score and count conflicts

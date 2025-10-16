@@ -17,7 +17,7 @@ export class DataFilters {
 
     setData(data) {
         this.allData = data;
-        this.filteredData = data;
+        this.filteredData = [...data]; // Create a copy to avoid reference issues
     }
 
     applyFilters(config) {
@@ -66,7 +66,7 @@ export class DataFilters {
 
     resetFilters() {
         this.filterConfig = this.getDefaultFilters();
-        this.filteredData = this.allData;
+        this.filteredData = [...this.allData];
         return this.filteredData;
     }
 }

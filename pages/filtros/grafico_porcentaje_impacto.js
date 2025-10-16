@@ -1,4 +1,4 @@
-import { getResponsiveFontSizes, updateChartResponsiveness } from './responsiveUtils.js';
+import { getResponsiveFontSizes, updateChartResponsiveness } from '../../responsiveUtils.js';
 
 export function createPorcentajeImpactoChart(data) {
     const MAX_HOURS = 7;

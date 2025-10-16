@@ -1,6 +1,16 @@
 export async function loadCSVData() {
     try {
-        const response = await fetch('DataSetSocialMedia.csv');
+        // Try to load from root first, then from parent directories
+        let response;
+        try {
+            response = await fetch('../../DataSetSocialMedia.csv');
+        } catch (e) {
+            try {
+                response = await fetch('../DataSetSocialMedia.csv');
+            } catch (e2) {
+                response = await fetch('DataSetSocialMedia.csv');
+            }
+        }
         const csvText = await response.text();
         const lines = csvText.split('\n');
         const headers = lines[0].split(',');

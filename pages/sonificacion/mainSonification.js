@@ -1,4 +1,4 @@
-import { loadCSVData } from './dataLoader.js';
+import { loadCSVData } from '../../dataLoader.js';
 import { createAdiccionConflictosChart } from './grafico_adiccion_conflictos.js';
 import { AddictionSonification } from './sonification.js';
 

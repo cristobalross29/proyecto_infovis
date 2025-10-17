@@ -176,18 +176,18 @@
             Esta es una <strong>sonificación de datos</strong>: convertimos información en sonido para contar una historia
             sobre la relación entre la adicción a redes sociales y los conflictos interpersonales.
         </p>
-        <h3 style="margin-top: 20px; margin-bottom: 10px; color: #2c3e50;">Elementos sonoros:</h3>
+        <h3 style="margin-top: 20px; margin-bottom: 10px; color: #2c3e50;">¿Cómo se intensifica el sonido?</h3>
         <ul>
-            <li><strong>Tono base:</strong> Aumenta de frecuencia (más agudo) con el nivel de adicción</li>
-            <li><strong>Disonancia:</strong> Armonías "incómodas" aparecen en altos niveles de adicción</li>
-            <li><strong>Distorsión:</strong> Se intensifica con el número de conflictos</li>
-            <li><strong>Ruido de fondo:</strong> Representa el "caos" de los conflictos</li>
-            <li><strong>Latidos cardíacos:</strong> Se aceleran simulando el estrés por adicción</li>
+            <li><strong>Frecuencia creciente:</strong> El tono sube de 200 Hz a 1200 Hz mientras aumenta la intensidad</li>
+            <li><strong>Volumen progresivo:</strong> El sonido se hace más fuerte a medida que crecen adicción y conflictos</li>
+            <li><strong>Duración extendida:</strong> Las notas se vuelven más largas y sostenidas en niveles altos</li>
+            <li><strong>Cambio de timbre:</strong> La onda evoluciona de suave (sawtooth) a agresiva (square) según la tensión</li>
+            <li><strong>Ritmo acelerado:</strong> El tempo aumenta creando sensación de urgencia e intensidad</li>
         </ul>
         <p style="margin-top: 15px;">
-            <strong>Instrucciones:</strong> Presiona "Reproducir" y observa cómo cada punto del gráfico se ilumina
-            mientras suena. El viaje sonoro va desde baja adicción (tonos claros y relajados) hasta alta adicción
-            (tonos distorsionados y tensos).
+            <strong>Instrucciones:</strong> Presiona "Reproducir" para escuchar la secuencia completa, o <strong>haz clic en cualquier punto de la línea</strong>
+            del gráfico para escuchar ese punto específico. Observa cómo el viaje sonoro va desde baja adicción
+            (tonos claros y relajados) hasta alta adicción (tonos distorsionados y tensos).
         </p>
     </div>
 
@@ -207,6 +207,45 @@
         </div>
 
         <div id="chart-adiccion-conflictos" class="chart"></div>
+    </div>
+
+    <!-- Segundo gráfico: Salud Mental en Caída -->
+    <div class="chart-container">
+        <h2 style="text-align: center; color: #2c3e50; margin-bottom: 20px;">
+            Salud Mental en Caída: El Precio del Exceso Digital
+        </h2>
+
+        <div class="description" style="margin-bottom: 20px;">
+            <h3 style="color: #2c3e50; margin-bottom: 10px;">🧠 ¿Cómo suena el deterioro mental?</h3>
+            <p style="color: #666; line-height: 1.8;">
+                Este gráfico muestra cómo el <strong>puntaje de salud mental</strong> disminuye a medida que aumentan
+                las <strong>horas de uso diario</strong> de redes sociales. La sonificación traduce esta caída en una
+                experiencia auditiva inquietante:
+            </p>
+            <ul style="color: #666; line-height: 1.8; margin-top: 10px;">
+                <li><strong>Melodía descendente:</strong> Tonos que bajan en frecuencia simulando la caída del bienestar mental</li>
+                <li><strong>Armonías menores:</strong> Acordes en tercera menor que crean una atmósfera melancólica</li>
+                <li><strong>Notas más graves:</strong> En niveles críticos, se agregan tonos bajos que intensifican la tristeza</li>
+                <li><strong>Transición progresiva:</strong> El sonido se vuelve más sombrío y lento a medida que empeora la salud mental</li>
+            </ul>
+            <p style="margin-top: 15px;">
+                <strong>Instrucciones:</strong> Presiona "Reproducir Sonificación" para escuchar el viaje completo desde
+                bajo uso (salud mental alta) hasta uso excesivo (salud mental baja), o <strong>haz clic en cualquier punto</strong>
+                de la línea para escuchar ese punto específico.
+            </p>
+        </div>
+
+        <div class="audio-controls">
+            <button id="play-btn-mental-health" class="audio-btn audio-btn-play">
+                🎵 Reproducir Sonificación
+            </button>
+            <button id="stop-btn-mental-health" class="audio-btn audio-btn-stop">
+                ⏹️ Detener
+            </button>
+            <div id="audio-status-mental-health" class="audio-info">Listo para reproducir</div>
+        </div>
+
+        <div id="chart-mental-health" class="chart"></div>
     </div>
 
     <script type="module" src="mainSonification.js"></script>

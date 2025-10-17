@@ -10,8 +10,7 @@ export class DataFilters {
             ageMin: 18,
             ageMax: 24,
             genders: ['Male', 'Female'],
-            conflictsMin: 0,
-            conflictsMax: 5
+            platforms: [] // Empty array means all platforms
         };
     }
 
@@ -26,7 +25,7 @@ export class DataFilters {
         this.filteredData = this.allData.filter(entry => {
             return this.passesAgeFilter(entry) &&
                    this.passesGenderFilter(entry) &&
-                   this.passesConflictsFilter(entry);
+                   this.passesPlatformFilter(entry);
         });
 
         return this.filteredData;
@@ -42,10 +41,9 @@ export class DataFilters {
         return this.filterConfig.genders.includes(entry.Gender);
     }
 
-    passesConflictsFilter(entry) {
-        const conflicts = parseInt(entry.Conflicts_Over_Social_Media);
-        return conflicts >= this.filterConfig.conflictsMin &&
-               conflicts <= this.filterConfig.conflictsMax;
+    passesPlatformFilter(entry) {
+        if (this.filterConfig.platforms.length === 0) return true;
+        return this.filterConfig.platforms.includes(entry.Most_Used_Platform);
     }
 
     getFilteredData() {
@@ -100,21 +98,8 @@ export class FilterUI {
             }
         });
 
-        // Conflicts selectors
-        const conflictsMin = document.getElementById('conflicts-min');
-        const conflictsMax = document.getElementById('conflicts-max');
-
-        conflictsMin.addEventListener('change', () => {
-            if (parseInt(conflictsMin.value) > parseInt(conflictsMax.value)) {
-                conflictsMax.value = conflictsMin.value;
-            }
-        });
-
-        conflictsMax.addEventListener('change', () => {
-            if (parseInt(conflictsMax.value) < parseInt(conflictsMin.value)) {
-                conflictsMin.value = conflictsMax.value;
-            }
-        });
+        // No additional event listeners needed for platform checkboxes
+        // They will be handled in getCurrentFilterConfig()
 
         // Apply filters button
         document.getElementById('apply-filters').addEventListener('click', () => {
@@ -135,8 +120,11 @@ export class FilterUI {
         const filteredCount = this.dataFilters.getFilteredCount();
         const totalCount = this.dataFilters.getTotalCount();
 
-        document.getElementById('filtered-count').textContent = filteredCount;
-        document.getElementById('total-count').textContent = totalCount;
+        const filteredCountEl = document.getElementById('filtered-count');
+        const totalCountEl = document.getElementById('total-count');
+
+        if (filteredCountEl) filteredCountEl.textContent = filteredCount;
+        if (totalCountEl) totalCountEl.textContent = totalCount;
     }
 
     getCurrentFilterConfig() {
@@ -144,12 +132,17 @@ export class FilterUI {
         if (document.getElementById('gender-male').checked) genders.push('Male');
         if (document.getElementById('gender-female').checked) genders.push('Female');
 
+        const platforms = [];
+        const selectedPlatform = document.getElementById('platform-select').value;
+        if (selectedPlatform !== 'all') {
+            platforms.push(selectedPlatform);
+        }
+
         return {
             ageMin: parseInt(document.getElementById('age-min').value),
             ageMax: parseInt(document.getElementById('age-max').value),
             genders,
-            conflictsMin: parseInt(document.getElementById('conflicts-min').value),
-            conflictsMax: parseInt(document.getElementById('conflicts-max').value)
+            platforms
         };
     }
 
@@ -172,9 +165,8 @@ export class FilterUI {
         document.getElementById('gender-male').checked = true;
         document.getElementById('gender-female').checked = true;
 
-        // Reset conflicts selectors
-        document.getElementById('conflicts-min').value = 0;
-        document.getElementById('conflicts-max').value = 5;
+        // Reset platform selector
+        document.getElementById('platform-select').value = 'all';
 
         // Update displays
         this.updateDisplayValues();

@@ -212,7 +212,7 @@ export function createPorcentajeImpactoChart(data) {
             bordercolor: 'black',
             borderwidth: 1,
             font: {
-                size: fontSizes.tick,
+                size: fontSizes.axisTitle,
                 family: 'Arial'
             }
         },
@@ -225,14 +225,18 @@ export function createPorcentajeImpactoChart(data) {
                 y: 50,
                 text: `Nadie afectado <br> hasta ${firstNonZeroX.toFixed(1)} hrs de uso`,
                 showarrow: true,
-                arrowhead: 26,
-                ax: -150,
-                ay: -0,
+                arrowhead: 2,
+                ax: -120,
+                ay: 0,
                 font: {
                     size: fontSizes.annotation,
                     color: "black",
                     family: "Arial"
-                }
+                },
+                bgcolor: "rgba(255, 255, 255, 1)",
+                bordercolor: "black",
+                borderwidth: 1,
+                borderpad: 4
             }] : []),
             // Mensaje para el punto donde todos están afectados (dinámico)
             ...(hundredPercentX ? [{
@@ -241,13 +245,17 @@ export function createPorcentajeImpactoChart(data) {
                 text: `Todos afectados <br> desde ${hundredPercentX.toFixed(1)} hrs de uso`,
                 showarrow: true,
                 arrowhead: 2,
-                ax: 110,
+                ax: 120,
                 ay: 0,
                 font: {
                     size: fontSizes.annotation,
                     color: "black",
                     family: "Arial"
-                }
+                },
+                bgcolor: "rgba(255, 255, 255, 1)",
+                bordercolor: "black",
+                borderwidth: 1,
+                borderpad: 4
             }] : []),
             // Mensaje "Sin datos" si no hay datos
             ...(sortedHours.length === 0 ? [{

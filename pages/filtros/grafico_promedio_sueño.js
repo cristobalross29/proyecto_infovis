@@ -154,13 +154,17 @@ export function createPromedioSueñoChart(data) {
             text: `A partir de ${maxDecreasePoint.toFixed(1)} hrs<br> se nota una caída<br> en las horas de sueño`,
             showarrow: true,
             arrowhead: 2,
-            ax: 130,
+            ax: 120,
             ay: 0,
             font: {
                 size: fontSizes.annotation,
                 color: 'black',
                 family: 'Arial'
-            }
+            },
+            bgcolor: "rgba(255, 255, 255, 1)",
+            bordercolor: "black",
+            borderwidth: 1,
+            borderpad: 4
         },
         ...(sevenHourSleep ? [{
             x: 6.98,
@@ -168,13 +172,17 @@ export function createPromedioSueñoChart(data) {
             text: `A las 7 hrs se registra<br>una disminución del<br>${percentageDecrease}% en las hrs de sueño`,
             showarrow: true,
             arrowhead: 2,
-            ax: -100,
-            ay: 90,
+            ax: -120,
+            ay: 0,
             font: {
                 size: fontSizes.annotation,
                 color: 'black',
                 family: 'Arial'
-            }
+            },
+            bgcolor: "rgba(255, 255, 255, 1)",
+            bordercolor: "black",
+            borderwidth: 1,
+            borderpad: 4
         }] : [])],
         autosize: true,
         margin: { l: 150, r: 80, t: 180, b: 120 }

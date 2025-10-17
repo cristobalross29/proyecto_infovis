@@ -68,6 +68,16 @@
             font-size: 0.8125rem;
         }
 
+        .filter-section select {
+            width: 100%;
+            padding: 0.5rem;
+            border: 0.0625rem solid #ddd;
+            border-radius: 0.3125rem;
+            font-size: 0.875rem;
+            background-color: white;
+            cursor: pointer;
+        }
+
         .range-selectors {
             display: flex;
             gap: 0.625rem;
@@ -264,28 +274,20 @@
             </div>
         </div>
 
-        <!-- Filtro de Nivel de Conflictos -->
+        <!-- Filtro de Plataforma -->
         <div class="filter-section">
-            <label>Nivel de Conflictos</label>
-            <div class="range-selectors">
-                <select id="conflicts-min">
-                    <option value="0">0</option>
-                    <option value="1">1</option>
-                    <option value="2">2</option>
-                    <option value="3">3</option>
-                    <option value="4">4</option>
-                    <option value="5">5</option>
-                </select>
-                <span>a</span>
-                <select id="conflicts-max">
-                    <option value="0">0</option>
-                    <option value="1">1</option>
-                    <option value="2">2</option>
-                    <option value="3">3</option>
-                    <option value="4">4</option>
-                    <option value="5" selected>5</option>
-                </select>
-            </div>
+            <label>Red Social:</label>
+            <select id="platform-select">
+                <option value="all" selected>Todas las redes</option>
+                <option value="Instagram">Instagram</option>
+                <option value="Facebook">Facebook</option>
+                <option value="TikTok">TikTok</option>
+                <option value="Twitter">Twitter</option>
+                <option value="WhatsApp">WhatsApp</option>
+                <option value="YouTube">YouTube</option>
+                <option value="Snapchat">Snapchat</option>
+                <option value="LinkedIn">LinkedIn</option>
+            </select>
         </div>
 
         <!-- Botones de acción -->
@@ -294,9 +296,6 @@
             <button class="btn btn-secondary" id="reset-filters">Restablecer Filtros</button>
         </div>
 
-        <div class="data-info" id="data-info">
-            Mostrando <strong id="filtered-count">0</strong> de <strong id="total-count">0</strong> registros
-        </div>
     </div>
 
     <div class="chart-container">

@@ -33,48 +33,77 @@ export function createAdiccionConflictosChart(data) {
         return result.sort((a, b) => a.addiction - b.addiction);
     }
 
-    // Create scatter plot trace
-    const trace = {
+    // Create line chart trace with gradient effect using segments
+    const traces = [];
+
+    // Create multiple line segments to simulate gradient
+    for (let i = 0; i < processedData.length - 1; i++) {
+        const normalized = (processedData[i].addiction - 2) / 7; // Scale 2-9 to 0-1
+        let lineColor;
+
+        if (normalized < 0.33) {
+            // Green zone
+            lineColor = `rgb(100, 200, 100)`;
+        } else if (normalized < 0.66) {
+            // Yellow zone
+            lineColor = `rgb(255, 200, 0)`;
+        } else {
+            // Red zone
+            lineColor = `rgb(220, 20, 60)`;
+        }
+
+        traces.push({
+            x: [processedData[i].addiction, processedData[i + 1].addiction],
+            y: [processedData[i].avgConflicts, processedData[i + 1].avgConflicts],
+            mode: 'lines',
+            type: 'scatter',
+            line: {
+                color: lineColor,
+                width: 4,
+                shape: 'spline'
+            },
+            showlegend: false,
+            hoverinfo: 'skip'
+        });
+    }
+
+    // Add invisible markers for hover information and click events
+    const mainTrace = {
         x: processedData.map(d => d.addiction),
         y: processedData.map(d => d.avgConflicts),
-        mode: 'markers+lines',
+        mode: 'markers',
         type: 'scatter',
         marker: {
-            size: processedData.map(d => Math.sqrt(d.count) * 8),
-            color: processedData.map(d => d.addiction),
-            colorscale: [
-                [0, 'rgba(100, 200, 100, 0.7)'],      // Verde (baja adicción)
-                [0.5, 'rgba(255, 200, 0, 0.7)'],      // Amarillo
-                [1, 'rgba(220, 20, 60, 0.7)']         // Rojo (alta adicción)
-            ],
-            showscale: true,
-            colorbar: {
-                title: 'Nivel de<br>Adicción',
-                thickness: 15,
-                len: 0.7
-            },
+            size: 12,
+            color: 'rgba(0, 0, 0, 0)',
             line: {
-                color: 'rgba(0, 0, 0, 0.5)',
-                width: 2
+                color: 'rgba(0, 0, 0, 0)',
+                width: 0
             }
-        },
-        line: {
-            color: 'rgba(100, 100, 100, 0.4)',
-            width: 2,
-            shape: 'spline'
         },
         text: processedData.map(d => `${d.count} estudiantes`),
         hovertemplate: '<b>Adicción:</b> %{x}<br>' +
                        '<b>Conflictos promedio:</b> %{y:.2f}<br>' +
-                       '<b>Estudiantes:</b> %{text}<extra></extra>'
+                       '<b>Estudiantes:</b> %{text}<extra></extra>',
+        hoverlabel: {
+            bgcolor: 'rgba(255, 255, 255, 0.95)',
+            bordercolor: 'rgba(0, 0, 0, 0.5)',
+            font: {
+                size: 14,
+                family: 'Arial, sans-serif'
+            }
+        },
+        showlegend: false
     };
+
+    traces.push(mainTrace);
 
     // Get responsive font sizes
     const fontSizes = getResponsiveFontSizes('chart-adiccion-conflictos');
 
     const layout = {
         title: {
-            text: 'Relación entre Adicción a Redes Sociales y Conflictos Interpersonales',
+            text: 'Relación entre Adicción a Redes Sociales y Conflictos Interpersonales Diarios',
             font: {
                 size: fontSizes.title,
                 family: 'Arial, sans-serif',
@@ -166,7 +195,7 @@ export function createAdiccionConflictosChart(data) {
         displayModeBar: false
     };
 
-    Plotly.newPlot('chart-adiccion-conflictos', [trace], layout, config);
+    Plotly.newPlot('chart-adiccion-conflictos', traces, layout, config);
 
     // Setup responsive font updates
     updateChartResponsiveness('chart-adiccion-conflictos', document.getElementById('chart-adiccion-conflictos'));

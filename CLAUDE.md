@@ -57,3 +57,13 @@ The application expects `DataSetSocialMedia.csv` to be in the project root with 
 ├── DataSetSocialMedia.csv # Source data file
 └── package.json        # Dependencies and scripts
 ```
+
+## Coding Standards
+
+### CSS Units
+- **NUNCA usar píxeles (px)**: Siempre usar unidades relativas como `rem`, `em`, `%`, `vh`, `vw` para todos los tamaños
+  - Tamaños de fuente: `rem` o `em`
+  - Márgenes y padding: `rem`
+  - Anchos y altos: `%`, `vh`, `vw`, o `rem`
+  - Bordes: `rem` (ej: `0.0625rem` en lugar de `1px`)
+  - Media queries: `rem` (ej: `48rem` en lugar de `768px`)

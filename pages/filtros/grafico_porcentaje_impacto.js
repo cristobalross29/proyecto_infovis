@@ -34,9 +34,35 @@ export function createPorcentajeImpactoChart(data) {
         return total > 0 ? (groupedData[hour].Yes / total) * 100 : 0;
     });
 
+    // Encontrar dinámicamente el punto donde comienza el impacto (primer porcentaje > 0)
+    // La línea debe estar en el ÚLTIMO punto donde el porcentaje es 0
+    let firstNonZeroX = null;
+    let hasImpact = false;
+
+    // Verificar si hay algún impacto
+    const maxPercentage = Math.max(...percentageAffected);
+
+    if (maxPercentage > 0) {
+        hasImpact = true;
+        for (let i = 0; i < percentageAffected.length; i++) {
+            if (percentageAffected[i] > 0) {
+                // Si encontramos el primer valor > 0, la línea va en el punto ANTERIOR
+                if (i > 0) {
+                    firstNonZeroX = sortedHours[i - 1];
+                } else {
+                    // Si el primer punto ya tiene valor > 0, la línea va en 0
+                    firstNonZeroX = 0;
+                }
+                break;
+            }
+        }
+    }
+
+    console.log('hasImpact:', hasImpact, 'firstNonZeroX:', firstNonZeroX, 'maxPercentage:', maxPercentage);
+
     // Asegurarse de que comienza en 0
     const xVals = [0, ...sortedHours]; // Incluir 0 en las horas
-    const yVals = [percentageAffected[0], ...percentageAffected]; // Añadir el primer valor de percentageAffected
+    const yVals = [0, ...percentageAffected]; // Empezar en 0% para el gráfico
 
     // Crear la traza de fondo azul (cubre toda el área del gráfico)
     const traceBackground = createAreaTrace({
@@ -44,7 +70,7 @@ export function createPorcentajeImpactoChart(data) {
         y: [100, 100],
         fill: 'tozeroy',
         fillcolor: 'rgba(70, 130, 180, 0.6)', // Azul de fondo
-        name: 'Fondo'
+        name: 'No Afectados'
     });
 
     // Crear la traza del área roja (afectados)
@@ -62,7 +88,8 @@ export function createPorcentajeImpactoChart(data) {
         y: yVals,
         color: 'black',
         width: 3,
-        name: '% Afectado académicamente'
+        name: '% Afectado académicamente',
+        showlegend: false
     });
 
     // Función para crear las trazas de área
@@ -76,25 +103,23 @@ export function createPorcentajeImpactoChart(data) {
     }
 
     // Función para crear la traza de línea
-    function createLineTrace({ x, y, color, width, name }) {
+    function createLineTrace({ x, y, color, width, name, showlegend = true }) {
         return {
             x, y, name,
             mode: 'lines',
             type: 'scatter',
             line: { color, width },
-            hovertemplate: '%{y:.1f}% afectados<extra></extra>'
+            hovertemplate: '%{y:.1f}% afectados<extra></extra>',
+            showlegend
         };
     }
-
-    // Línea vertical fija en x=2.5 para marcar el punto de 0%
-    const firstNonZeroX = 2.5;
 
     // Encontrar el punto donde el porcentaje llega al 100%
     const hundredPercentIndex = yVals.findIndex(y => y >= 100);
     const hundredPercentX = hundredPercentIndex !== -1 ? xVals[hundredPercentIndex] : null;
 
-    // Línea vertical donde comienza el impacto (en x=2.5)
-    const verticalLineStart = {
+    // Línea vertical donde comienza el impacto (solo si hay impacto y firstNonZeroX > 0)
+    const verticalLineStart = hasImpact && firstNonZeroX !== null && firstNonZeroX > 0 ? {
         x: [firstNonZeroX, firstNonZeroX],
         y: [0, 105],
         mode: 'lines',
@@ -105,8 +130,9 @@ export function createPorcentajeImpactoChart(data) {
             dash: 'dash'
         },
         name: 'Inicio del impacto',
-        hoverinfo: 'skip'
-    };
+        hoverinfo: 'skip',
+        showlegend: false
+    } : null;
 
     // Línea vertical donde llega al 100%
     const verticalLineEnd = hundredPercentX ? {
@@ -120,7 +146,8 @@ export function createPorcentajeImpactoChart(data) {
             dash: 'dash'
         },
         name: 'Impacto total',
-        hoverinfo: 'skip'
+        hoverinfo: 'skip',
+        showlegend: false
     } : null;
 
     // Get responsive font sizes
@@ -175,70 +202,79 @@ export function createPorcentajeImpactoChart(data) {
                 family: 'Arial'
             }
         },
-        showlegend: false,
+        showlegend: true,
+        legend: {
+            x: 0.02,
+            y: 0.98,
+            xanchor: 'left',
+            yanchor: 'top',
+            bgcolor: 'rgba(255, 255, 255, 0.8)',
+            bordercolor: 'black',
+            borderwidth: 1,
+            font: {
+                size: fontSizes.axisTitle,
+                family: 'Arial'
+            }
+        },
         autosize: true,
         margin: { l: 150, r: 80, t: 180, b: 120 },
         annotations: [
-            // Mensaje para el punto donde nadie está afectado (antes de 2 horas)
-            {
-                x: 2.3,
-                y: 80,
-                text: "Nadie afectado <br> hasta 2.5 hrs de uso",
-                showarrow: true,
-                arrowhead: 26,
-                ax: -150,
-                ay: -0,
-                font: {
-                    size: fontSizes.annotation,
-                    color: "black",
-                    family: "Arial"
-                }
-            },
-            // Mensaje para el punto donde todos están afectados (a las 5.5 horas)
-            {
-                x: 5.5,  // Ajustamos la posición a la línea
-                y: 80,
-                text: "Todos afectados <br> desde 5.5 hrs de uso",
+            // Mensaje para el punto donde nadie está afectado (dinámico) - solo si hay impacto y firstNonZeroX > 0
+            ...(hasImpact && firstNonZeroX !== null && firstNonZeroX > 0 ? [{
+                x: firstNonZeroX - 0.2,
+                y: 50,
+                text: `Nadie afectado <br> hasta ${firstNonZeroX.toFixed(1)} hrs de uso`,
                 showarrow: true,
                 arrowhead: 2,
-                ax: 110,
+                ax: -120,
                 ay: 0,
                 font: {
                     size: fontSizes.annotation,
                     color: "black",
                     family: "Arial"
-                }
-            },
-            // Etiqueta "No Afectados" en el área azul
-            {
-                x: 1.5,
+                },
+                bgcolor: "rgba(255, 255, 255, 1)",
+                bordercolor: "black",
+                borderwidth: 1,
+                borderpad: 4
+            }] : []),
+            // Mensaje para el punto donde todos están afectados (dinámico)
+            ...(hundredPercentX ? [{
+                x: hundredPercentX,
                 y: 50,
-                text: "No Afectados",
+                text: `Todos afectados <br> desde ${hundredPercentX.toFixed(1)} hrs de uso`,
+                showarrow: true,
+                arrowhead: 2,
+                ax: 120,
+                ay: 0,
+                font: {
+                    size: fontSizes.annotation,
+                    color: "black",
+                    family: "Arial"
+                },
+                bgcolor: "rgba(255, 255, 255, 1)",
+                bordercolor: "black",
+                borderwidth: 1,
+                borderpad: 4
+            }] : []),
+            // Mensaje "Sin datos" si no hay datos
+            ...(sortedHours.length === 0 ? [{
+                x: 3.5,
+                y: 50,
+                text: "Sin datos",
                 showarrow: false,
                 font: {
                     size: fontSizes.annotationLarge,
-                    color: "white",
+                    color: "black",
                     family: "Arial"
                 }
-            },
-            // Etiqueta "Afectados" en el área roja
-            {
-                x: 6.3,
-                y: 50,
-                text: "Afectados",
-                showarrow: false,
-                font: {
-                    size: fontSizes.annotationLarge,
-                    color: "white",
-                    family: "Arial"
-                }
-            }
+            }] : [])
         ]
     };
 
     // Se actualiza el gráfico con las nuevas trazas (fondo azul, área roja de afectados, línea y líneas verticales)
     const traces = [traceBackground, traceAreaAfectados, traceLine];
-    traces.push(verticalLineStart);
+    if (verticalLineStart) traces.push(verticalLineStart);
     if (verticalLineEnd) traces.push(verticalLineEnd);
 
     const config = {

@@ -45,11 +45,46 @@
             gap: 1rem;
             align-items: flex-start;
             flex-wrap: wrap;
+            transition: all 0.3s ease;
+        }
+
+        .filter-panel.sticky {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            margin: 0 auto;
+            border-radius: 0;
+            z-index: 1000;
+            box-shadow: 0 0.125rem 0.5rem rgba(0, 0, 0, 0.1);
+            padding: 0.625rem 0.9375rem;
+        }
+
+        .filter-panel.sticky .filter-title {
+            display: none;
+        }
+
+        .filter-panel-placeholder {
+            display: none;
+        }
+
+        .filter-panel-placeholder.active {
+            display: block;
+            height: 10rem;
         }
 
         .filter-section {
             flex: 1;
-            min-width: 12.5rem;
+            min-width: 15rem;
+            padding: 1rem;
+            border: 0.0625rem solid #000;
+            border-radius: 0.5rem;
+            background: #ffffff;
+        }
+
+        .filter-section.filter-section-platform {
+            flex: 2;
+            min-width: 30rem;
         }
 
         .filter-section label {
@@ -70,25 +105,152 @@
             cursor: pointer;
         }
 
-        .range-selectors {
-            display: flex;
+        .platform-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
             gap: 0.625rem;
+            margin-top: 0.5rem;
+        }
+
+        .platform-item {
+            display: flex;
             align-items: center;
+            gap: 0.375rem;
         }
 
-        .range-selectors select {
-            flex: 1;
-            padding: 0.375rem;
-            border: 0.0625rem solid #ddd;
-            border-radius: 0.3125rem;
-            font-size: 0.8125rem;
-            background-color: white;
+        .platform-item input[type="radio"] {
+            width: 1.125rem;
+            height: 1.125rem;
             cursor: pointer;
+            flex-shrink: 0;
         }
 
-        .range-selectors span {
-            color: #666;
+        .platform-item label {
             font-weight: normal;
+            margin: 0;
+            cursor: pointer;
+            font-size: 0.875rem;
+            display: flex;
+            align-items: center;
+            gap: 0.375rem;
+        }
+
+        .platform-icon {
+            width: 1.25rem;
+            height: 1.25rem;
+            object-fit: contain;
+            flex-shrink: 0;
+        }
+
+        .range-slider-container {
+            position: relative;
+            width: 100%;
+            height: 2.5rem;
+            margin-top: 0.625rem;
+        }
+
+        .range-track {
+            position: absolute;
+            width: 100%;
+            height: 0.375rem;
+            background: #ddd;
+            border-radius: 0.3125rem;
+            top: 50%;
+            transform: translateY(-50%);
+            z-index: 1;
+        }
+
+        .range-fill {
+            position: absolute;
+            height: 0.375rem;
+            background: #3498db;
+            border-radius: 0.3125rem;
+            top: 50%;
+            transform: translateY(-50%);
+            pointer-events: none;
+            z-index: 2;
+        }
+
+        .range-slider {
+            position: absolute;
+            width: 100%;
+            background: transparent;
+            top: 50%;
+            transform: translateY(-50%);
+            -webkit-appearance: none;
+            appearance: none;
+            cursor: pointer;
+            margin: 0;
+            padding: 0;
+        }
+
+        .range-slider-min {
+            z-index: 3;
+            pointer-events: none;
+        }
+
+        .range-slider-max {
+            z-index: 4;
+            pointer-events: none;
+        }
+
+        .range-slider::-webkit-slider-runnable-track {
+            background: transparent;
+            height: 0.375rem;
+            border: none;
+        }
+
+        .range-slider::-moz-range-track {
+            background: transparent;
+            height: 0.375rem;
+            border: none;
+        }
+
+        .range-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 1.25rem;
+            height: 1.25rem;
+            background: #3498db;
+            border: 0.125rem solid white;
+            border-radius: 50%;
+            cursor: grab;
+            box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.2);
+            pointer-events: auto;
+            margin-top: -0.4375rem;
+        }
+
+        .range-slider::-moz-range-thumb {
+            width: 1.25rem;
+            height: 1.25rem;
+            background: #3498db;
+            border: 0.125rem solid white;
+            border-radius: 50%;
+            cursor: grab;
+            box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.2);
+            pointer-events: auto;
+        }
+
+        .range-slider::-webkit-slider-thumb:hover {
+            background: #2980b9;
+            transform: scale(1.1);
+        }
+
+        .range-slider::-moz-range-thumb:hover {
+            background: #2980b9;
+            transform: scale(1.1);
+        }
+
+        .range-slider::-webkit-slider-thumb:active {
+            background: #2980b9;
+            transform: scale(1.2);
+            cursor: grabbing;
+        }
+
+        .range-slider::-moz-range-thumb:active {
+            background: #2980b9;
+            transform: scale(1.2);
+            cursor: grabbing;
         }
 
         .checkbox-group {
@@ -103,7 +265,8 @@
             gap: 0.3125rem;
         }
 
-        .checkbox-item input[type="checkbox"] {
+        .checkbox-item input[type="checkbox"],
+        .checkbox-item input[type="radio"] {
             width: 1.125rem;
             height: 1.125rem;
             cursor: pointer;
@@ -284,6 +447,10 @@
                 gap: 0.625rem;
             }
 
+            .platform-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
             .filter-actions {
                 flex-direction: column;
                 width: 100%;
@@ -310,32 +477,18 @@
     <!-- SECCIÓN 1: FILTROS -->
     <h2 class="section-title">📊 Visualización con Filtros</h2>
 
-    <div class="filter-panel">
+    <div class="filter-panel-placeholder"></div>
+    <div class="filter-panel" id="filter-panel">
         <h3 class="filter-title" style="color: #2c3e50;">Filtros de Datos</h3>
 
         <!-- Filtro de Rango de Edad -->
         <div class="filter-section">
-            <label>Rango de Edad</label>
-            <div class="range-selectors">
-                <select id="age-min">
-                    <option value="18">18</option>
-                    <option value="19">19</option>
-                    <option value="20">20</option>
-                    <option value="21">21</option>
-                    <option value="22">22</option>
-                    <option value="23">23</option>
-                    <option value="24">24</option>
-                </select>
-                <span>a</span>
-                <select id="age-max">
-                    <option value="18">18</option>
-                    <option value="19">19</option>
-                    <option value="20">20</option>
-                    <option value="21">21</option>
-                    <option value="22">22</option>
-                    <option value="23">23</option>
-                    <option value="24" selected>24</option>
-                </select>
+            <label>Rango de Edad: <span id="age-range-display">18 - 24</span></label>
+            <div class="range-slider-container">
+                <div class="range-track"></div>
+                <div class="range-fill" id="range-fill"></div>
+                <input type="range" id="age-min" class="range-slider range-slider-min" min="18" max="24" value="18" step="1">
+                <input type="range" id="age-max" class="range-slider range-slider-max" min="18" max="24" value="24" step="1">
             </div>
         </div>
 
@@ -344,36 +497,81 @@
             <label>Género:</label>
             <div class="checkbox-group">
                 <div class="checkbox-item">
-                    <input type="checkbox" id="gender-male" value="Male" checked>
-                    <label for="gender-male">Masculino</label>
+                    <input type="radio" id="gender-both" class="auto-filter" name="gender" value="both" checked>
+                    <label for="gender-both">⚥ Ambos</label>
                 </div>
                 <div class="checkbox-item">
-                    <input type="checkbox" id="gender-female" value="Female" checked>
-                    <label for="gender-female">Femenino</label>
+                    <input type="radio" id="gender-male" class="auto-filter" name="gender" value="Male">
+                    <label for="gender-male">♂ Masculino</label>
+                </div>
+                <div class="checkbox-item">
+                    <input type="radio" id="gender-female" class="auto-filter" name="gender" value="Female">
+                    <label for="gender-female">♀ Femenino</label>
                 </div>
             </div>
         </div>
 
         <!-- Filtro de Plataforma -->
-        <div class="filter-section">
+        <div class="filter-section filter-section-platform">
             <label>Red Social:</label>
-            <select id="platform-select">
-                <option value="all" selected>Todas las redes</option>
-                <option value="Instagram">Instagram</option>
-                <option value="Facebook">Facebook</option>
-                <option value="TikTok">TikTok</option>
-                <option value="Twitter">Twitter</option>
-                <option value="WhatsApp">WhatsApp</option>
-                <option value="YouTube">YouTube</option>
-                <option value="Snapchat">Snapchat</option>
-                <option value="LinkedIn">LinkedIn</option>
-            </select>
-        </div>
-
-        <!-- Botones de acción -->
-        <div class="filter-actions">
-            <button class="btn btn-primary" id="apply-filters">Aplicar Filtros</button>
-            <button class="btn btn-secondary" id="reset-filters">Restablecer Filtros</button>
+            <div class="platform-grid">
+                <div class="platform-item">
+                    <input type="radio" id="platform-all" class="auto-filter" name="platform" value="all" checked>
+                    <label for="platform-all">
+                        <img src="https://cdn-icons-png.flaticon.com/512/709/709579.png" alt="Todas" class="platform-icon">
+                        Todas
+                    </label>
+                </div>
+                <div class="platform-item">
+                    <input type="radio" id="platform-instagram" class="auto-filter" name="platform" value="Instagram">
+                    <label for="platform-instagram">
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/a/a5/Instagram_icon.png" alt="Instagram" class="platform-icon">
+                        Instagram
+                    </label>
+                </div>
+                <div class="platform-item">
+                    <input type="radio" id="platform-facebook" class="auto-filter" name="platform" value="Facebook">
+                    <label for="platform-facebook">
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/5/51/Facebook_f_logo_%282019%29.svg" alt="Facebook" class="platform-icon">
+                        Facebook
+                    </label>
+                </div>
+                <div class="platform-item">
+                    <input type="radio" id="platform-tiktok" class="auto-filter" name="platform" value="TikTok">
+                    <label for="platform-tiktok">
+                        <img src="https://cdn-icons-png.flaticon.com/512/3046/3046121.png" alt="TikTok" class="platform-icon">
+                        TikTok
+                    </label>
+                </div>
+                <div class="platform-item">
+                    <input type="radio" id="platform-twitter" class="auto-filter" name="platform" value="Twitter">
+                    <label for="platform-twitter">
+                        <img src="https://cdn-icons-png.flaticon.com/512/733/733579.png" alt="Twitter" class="platform-icon">
+                        Twitter
+                    </label>
+                </div>
+                <div class="platform-item">
+                    <input type="radio" id="platform-whatsapp" class="auto-filter" name="platform" value="WhatsApp">
+                    <label for="platform-whatsapp">
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg" alt="WhatsApp" class="platform-icon">
+                        WhatsApp
+                    </label>
+                </div>
+                <div class="platform-item">
+                    <input type="radio" id="platform-youtube" class="auto-filter" name="platform" value="YouTube">
+                    <label for="platform-youtube">
+                        <img src="https://cdn-icons-png.flaticon.com/512/1384/1384060.png" alt="YouTube" class="platform-icon">
+                        YouTube
+                    </label>
+                </div>
+                <div class="platform-item">
+                    <input type="radio" id="platform-snapchat" class="auto-filter" name="platform" value="Snapchat">
+                    <label for="platform-snapchat">
+                        <img src="https://cdn-icons-png.flaticon.com/512/3669/3669965.png" alt="Snapchat" class="platform-icon">
+                        Snapchat
+                    </label>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -427,5 +625,25 @@
     </div>
 
     <script type="module" src="main.js"></script>
+    <script>
+        // Sticky filter panel
+        const filterPanel = document.getElementById('filter-panel');
+        const placeholder = document.querySelector('.filter-panel-placeholder');
+        let filterPanelOffset = 0;
+
+        window.addEventListener('DOMContentLoaded', () => {
+            filterPanelOffset = filterPanel.offsetTop;
+        });
+
+        window.addEventListener('scroll', () => {
+            if (window.pageYOffset > filterPanelOffset) {
+                filterPanel.classList.add('sticky');
+                placeholder.classList.add('active');
+            } else {
+                filterPanel.classList.remove('sticky');
+                placeholder.classList.remove('active');
+            }
+        });
+    </script>
 </body>
 </html>

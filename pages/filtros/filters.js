@@ -82,34 +82,50 @@ export class FilterUI {
     }
 
     setupEventListeners() {
-        // Age selectors
+        // Age range sliders
         const ageMin = document.getElementById('age-min');
         const ageMax = document.getElementById('age-max');
+        const rangeFill = document.getElementById('range-fill');
+        const rangeDisplay = document.getElementById('age-range-display');
 
-        ageMin.addEventListener('change', () => {
-            if (parseInt(ageMin.value) > parseInt(ageMax.value)) {
-                ageMax.value = ageMin.value;
+        const updateRangeSlider = () => {
+            let minVal = parseInt(ageMin.value);
+            let maxVal = parseInt(ageMax.value);
+
+            // Ensure min doesn't exceed max
+            if (minVal > maxVal) {
+                const temp = maxVal;
+                maxVal = minVal;
+                minVal = temp;
+                ageMin.value = minVal;
+                ageMax.value = maxVal;
             }
-        });
 
-        ageMax.addEventListener('change', () => {
-            if (parseInt(ageMax.value) < parseInt(ageMin.value)) {
-                ageMin.value = ageMax.value;
-            }
-        });
+            // Update display
+            rangeDisplay.textContent = `${minVal} - ${maxVal}`;
 
-        // No additional event listeners needed for platform checkboxes
-        // They will be handled in getCurrentFilterConfig()
+            // Update fill bar position
+            const minPercent = ((minVal - 18) / (24 - 18)) * 100;
+            const maxPercent = ((maxVal - 18) / (24 - 18)) * 100;
 
-        // Apply filters button
-        document.getElementById('apply-filters').addEventListener('click', () => {
+            rangeFill.style.left = `${minPercent}%`;
+            rangeFill.style.width = `${maxPercent - minPercent}%`;
+
             this.applyFilters();
+        };
+
+        ageMin.addEventListener('input', updateRangeSlider);
+        ageMax.addEventListener('input', updateRangeSlider);
+
+        // Auto-apply filters on change for all filter controls
+        document.querySelectorAll('.auto-filter').forEach(element => {
+            element.addEventListener('change', () => {
+                this.applyFilters();
+            });
         });
 
-        // Reset filters button
-        document.getElementById('reset-filters').addEventListener('click', () => {
-            this.resetFilters();
-        });
+        // Initialize range slider
+        updateRangeSlider();
     }
 
     updateDisplayValues() {
@@ -129,11 +145,16 @@ export class FilterUI {
 
     getCurrentFilterConfig() {
         const genders = [];
-        if (document.getElementById('gender-male').checked) genders.push('Male');
-        if (document.getElementById('gender-female').checked) genders.push('Female');
+        const selectedGender = document.querySelector('input[name="gender"]:checked').value;
+
+        if (selectedGender === 'both') {
+            genders.push('Male', 'Female');
+        } else {
+            genders.push(selectedGender);
+        }
 
         const platforms = [];
-        const selectedPlatform = document.getElementById('platform-select').value;
+        const selectedPlatform = document.querySelector('input[name="platform"]:checked').value;
         if (selectedPlatform !== 'all') {
             platforms.push(selectedPlatform);
         }
@@ -161,12 +182,11 @@ export class FilterUI {
         document.getElementById('age-min').value = 18;
         document.getElementById('age-max').value = 24;
 
-        // Reset gender checkboxes
-        document.getElementById('gender-male').checked = true;
-        document.getElementById('gender-female').checked = true;
+        // Reset gender radio buttons
+        document.getElementById('gender-both').checked = true;
 
-        // Reset platform selector
-        document.getElementById('platform-select').value = 'all';
+        // Reset platform radio buttons
+        document.getElementById('platform-all').checked = true;
 
         // Update displays
         this.updateDisplayValues();

@@ -1,6 +1,6 @@
-// Sonificación de Salud Mental en Caída
-// Representa el deterioro de la salud mental con el aumento del uso de redes sociales
-// Usa audio de respiración real que se manipula para representar ansiedad creciente
+// Sonificación Simplificada de Salud Mental
+// Representa el deterioro de la salud mental mediante la velocidad de reproducción
+// A menor puntaje de salud mental, más rápido se reproduce el audio
 
 export class MentalHealthSonification {
     constructor() {
@@ -9,98 +9,25 @@ export class MentalHealthSonification {
         this.chartData = null;
         this.audioBuffer = null;
         this.audioLoaded = false;
-        this.reverbReady = false;
 
-        // Ruta del audio
-        this.audioUrl = 'pages/sonificacion/9dbc5d02.mp3';
+        // Ruta del nuevo audio
+        this.audioUrl = 'pages/sonificacion/3-36681a89.mp3';
 
-        // Cargar el audio primero usando Tone.Buffer
+        // Cargar el audio usando Tone.Buffer
         this.audioBuffer = new window.Tone.Buffer(
             this.audioUrl,
             () => {
                 this.audioLoaded = true;
-                console.log('✓ Audio de respiración cargado correctamente');
+                console.log('✓ Audio cargado correctamente');
                 console.log('Duración del audio:', this.audioBuffer.duration, 'segundos');
             },
             (error) => {
-                console.error('❌ Error cargando audio con ruta absoluta:', error);
-                console.log('Intentando ruta relativa como fallback...');
-                // Fallback: intentar con ruta relativa al documento HTML
-                this.audioUrl = './9dbc5d02.mp3';
-                this.audioBuffer = new window.Tone.Buffer(
-                    this.audioUrl,
-                    () => {
-                        this.audioLoaded = true;
-                        console.log('✓ Audio cargado con ruta relativa');
-                    },
-                    (err) => {
-                        console.error('❌ No se pudo cargar el audio con ninguna ruta:', err);
-                        console.error('Verifica que el archivo 9dbc5d02.mp3 exista en pages/sonificacion/');
-                    }
-                );
+                console.error('❌ Error cargando audio:', error);
+                console.error('Verifica que el archivo 3-36681a89.mp3 exista en pages/sonificacion/');
             }
         );
 
-        // Crear reverb
-        this.reverb = new window.Tone.Reverb({
-            decay: 1.5,
-            wet: 0.2
-        }).toDestination();
-
-        this.reverb.generate().then(() => {
-            console.log('✓ Reverb listo');
-            this.reverbReady = true;
-        });
-
-        // Crear filtro
-        this.breathFilter = new window.Tone.Filter({
-            type: 'lowpass',
-            frequency: 2000,
-            rolloff: -24,
-            Q: 1
-        });
-
-        // Pitch shift
-        this.pitchShift = new window.Tone.PitchShift({
-            pitch: 0,
-            windowSize: 0.1,
-            delayTime: 0,
-            feedback: 0
-        });
-
-        // Distorsión
-        this.distortion = new window.Tone.Distortion({
-            distortion: 0,
-            wet: 0
-        });
-
-        // Tremolo
-        this.tremolo = new window.Tone.Tremolo({
-            frequency: 0,
-            depth: 0
-        }).start();
-
-        // Conectar cadena de efectos
-        this.breathFilter.connect(this.reverb);
-        this.distortion.connect(this.breathFilter);
-        this.tremolo.connect(this.distortion);
-        this.pitchShift.connect(this.tremolo);
-
-        // Ruido de pánico
-        this.panicNoise = new window.Tone.Noise({
-            type: 'white',
-            volume: -40
-        });
-
-        this.panicFilter = new window.Tone.Filter({
-            type: 'highpass',
-            frequency: 1000,
-            rolloff: -12
-        }).toDestination();
-
-        this.panicNoise.connect(this.panicFilter);
-
-        // Player actual que usaremos
+        // Player actual
         this.currentPlayer = null;
     }
 
@@ -113,15 +40,15 @@ export class MentalHealthSonification {
 
         // Iniciar contexto de audio
         await window.Tone.start();
-        console.log('🎵 Iniciando contexto de audio...');
+        console.log('🎵 Iniciando sonificación...');
 
-        // Esperar a que todo esté listo
-        while (!this.audioLoaded || !this.reverbReady) {
-            console.log('⏳ Esperando recursos...');
+        // Esperar a que el audio esté cargado
+        while (!this.audioLoaded) {
+            console.log('⏳ Esperando audio...');
             await new Promise(resolve => setTimeout(resolve, 100));
         }
 
-        console.log('✅ Todo listo, comenzando sonificación');
+        console.log('✅ Comenzando reproducción');
 
         this.isPlaying = true;
         this.currentStep = 0;
@@ -137,147 +64,138 @@ export class MentalHealthSonification {
         }
 
         const dataPoint = this.chartData[this.currentStep];
+        const pointIndex = this.currentStep;
+        const totalPoints = this.chartData.length;
 
         // Resaltar punto actual en el gráfico
         this.highlightPoint(this.currentStep);
 
-        // Producir respiración con audio manipulado
-        const breathDuration = this.triggerBreath(dataPoint);
+        // Determinar si es el primer o último punto
+        const isFirst = pointIndex === 0;
+        const isLast = pointIndex === totalPoints - 1;
+
+        // Reproducir audio con duración fija de 2.6 segundos
+        this.playAudioWithFixedDuration(dataPoint, isFirst, isLast);
 
         this.currentStep++;
 
-        // Pausa después de completar respiración (más corta con peor salud)
-        const restPause = dataPoint.avgMentalHealth >= 8 ? 800 :
-                         dataPoint.avgMentalHealth >= 6 ? 500 :
-                         dataPoint.avgMentalHealth >= 4 ? 300 :
-                         dataPoint.avgMentalHealth >= 2 ? 150 : 100;
+        // Todos los puntos duran exactamente 2.6 segundos
+        const fixedDuration = 2600; // ms
 
-        // Tiempo total = duración del audio + pausa
-        const totalInterval = breathDuration + restPause;
-
-        setTimeout(() => this.playSequence(), totalInterval);
+        setTimeout(() => this.playSequence(), fixedDuration);
     }
 
-    triggerBreath(dataPoint) {
+    playAudioWithFixedDuration(dataPoint, isFirst, isLast) {
         const { avgMentalHealth } = dataPoint;
+        const fixedDuration = 2600; // ms
 
-        console.log(`🫁 Reproduciendo respiración para salud mental: ${avgMentalHealth.toFixed(1)}`);
+        console.log(`🎵 Salud mental: ${avgMentalHealth.toFixed(1)}`);
 
-        // === MAPEO CLARO DE SALUD MENTAL A PARÁMETROS ===
-        // 10-8: Respiración muy tranquila y profunda (lenta, grave)
-        // 7-5: Respiración normal
-        // 4-3: Respiración acelerada (rápida, agitada)
-        // <3: Hiperventilación/pánico (muy rápida, aguda, con jadeos)
+        // Calcular playbackRate base
+        let basePlaybackRate = 2.5 - (avgMentalHealth * 0.2);
 
-        // === 1. VELOCIDAD DE REPRODUCCIÓN (playbackRate) ===
-        const playbackRate = avgMentalHealth >= 8 ? 0.7 :   // Muy lento y profundo
-                            avgMentalHealth >= 6 ? 0.9 :    // Normal-lento
-                            avgMentalHealth >= 4 ? 1.1 :    // Ligeramente acelerado
-                            avgMentalHealth >= 2 ? 1.4 :    // Acelerado
-                            1.8;                             // Hiperventilación
-
-        // === 2. VOLUMEN ===
-        const volume = avgMentalHealth >= 8 ? -12 :   // Suave
-                      avgMentalHealth >= 6 ? -8 :     // Normal
-                      avgMentalHealth >= 4 ? -4 :     // Fuerte
-                      avgMentalHealth >= 2 ? 0 :      // Muy fuerte
-                      3;                               // Jadeo intenso
-
-        // === 3. PITCH SHIFT (tono más agudo = tensión) ===
-        const pitchShift = avgMentalHealth >= 8 ? -2 :   // Grave y relajado
-                          avgMentalHealth >= 6 ? 0 :     // Normal
-                          avgMentalHealth >= 4 ? 2 :     // Más agudo
-                          avgMentalHealth >= 2 ? 4 :     // Muy agudo
-                          6;                              // Extremadamente agudo
-
-        this.pitchShift.pitch = pitchShift;
-
-        // === 4. TREMOLO (temblor en la respiración) ===
-        const tremoloFreq = avgMentalHealth >= 6 ? 0 :     // Sin temblor
-                           avgMentalHealth >= 4 ? 4 :      // Temblor leve
-                           avgMentalHealth >= 2 ? 8 :      // Temblor moderado
-                           12;                              // Temblor intenso
-
-        const tremoloDepth = avgMentalHealth >= 6 ? 0 :
-                            avgMentalHealth >= 4 ? 0.3 :
-                            avgMentalHealth >= 2 ? 0.5 :
-                            0.7;
-
-        this.tremolo.frequency.value = tremoloFreq;
-        this.tremolo.depth.value = tremoloDepth;
-
-        // === 5. DISTORSIÓN (tensión vocal) ===
-        const distortion = avgMentalHealth >= 6 ? 0 :
-                          avgMentalHealth >= 4 ? 0.1 :
-                          avgMentalHealth >= 2 ? 0.3 :
-                          0.5;
-
-        const distortionWet = avgMentalHealth >= 6 ? 0 :
-                             avgMentalHealth >= 4 ? 0.2 :
-                             avgMentalHealth >= 2 ? 0.4 :
-                             0.6;
-
-        this.distortion.distortion = distortion;
-        this.distortion.wet.value = distortionWet;
-
-        // === 6. FILTRO (brillo/sibilancia) ===
-        const filterFreq = avgMentalHealth >= 8 ? 1500 :   // Suave
-                          avgMentalHealth >= 6 ? 2500 :    // Normal
-                          avgMentalHealth >= 4 ? 4000 :    // Brillante
-                          avgMentalHealth >= 2 ? 6000 :    // Muy brillante
-                          8000;                             // Sibilante
-
-        const filterQ = avgMentalHealth >= 6 ? 1 :
-                       avgMentalHealth >= 4 ? 2 :
-                       avgMentalHealth >= 2 ? 4 :
-                       6;
-
-        this.breathFilter.frequency.value = filterFreq;
-        this.breathFilter.Q.value = filterQ;
-
-        // === 7. REVERB (profundidad) ===
-        const reverbWet = avgMentalHealth >= 6 ? 0.15 :
-                         avgMentalHealth >= 4 ? 0.25 :
-                         0.35;
-
-        this.reverb.wet.value = reverbWet;
-
-        // === 8. RUIDO DE PÁNICO (solo en ansiedad extrema) ===
-        if (avgMentalHealth < 4) {
-            const panicVolume = avgMentalHealth >= 2 ? -28 : -20;
-            const panicDuration = avgMentalHealth >= 2 ? 0.15 : 0.25;
-
-            this.panicNoise.volume.value = panicVolume;
-            this.panicNoise.start();
-            this.panicNoise.stop(`+${panicDuration}`);
+        // === PRIMER PUNTO: 1.3x más largo (más lento) ===
+        if (isFirst) {
+            basePlaybackRate = basePlaybackRate / 1.3;
+            console.log(`🌟 PRIMER PUNTO: Reproducción 1.3x más lenta`);
         }
 
-        // === REPRODUCIR AUDIO ===
-        // Crear nuevo player cada vez usando la URL directamente
+        // === ÚLTIMO PUNTO: Repetir 3 veces rápido ===
+        if (isLast) {
+            console.log(`🔚 ÚLTIMO PUNTO: Repetir 3 veces en 2.6s`);
+
+            // Calcular playbackRate para que 3 repeticiones quepan en 2.6s
+            const originalDuration = this.audioBuffer.duration;
+            const durationPerRepetition = fixedDuration / 3 / 1000; // en segundos
+            const fastPlaybackRate = originalDuration / durationPerRepetition;
+
+            // Detener player anterior
+            this.stopCurrentPlayer();
+
+            // Reproducir 3 veces con pausas mínimas
+            for (let i = 0; i < 3; i++) {
+                setTimeout(() => {
+                    const player = new window.Tone.Player({
+                        url: this.audioUrl,
+                        playbackRate: fastPlaybackRate,
+                        loop: false,
+                        onload: () => player.start()
+                    }).toDestination();
+
+                    // Guardar referencia solo del último
+                    if (i === 2) {
+                        this.currentPlayer = player;
+                    }
+                }, i * (fixedDuration / 3));
+            }
+
+            return;
+        }
+
+        // === PUNTOS INTERMEDIOS ===
+        const originalDuration = this.audioBuffer.duration;
+        const audioDuration = (originalDuration / basePlaybackRate) * 1000; // en ms
+
+        console.log(`⚡ Velocidad base: ${basePlaybackRate.toFixed(2)}x`);
+        console.log(`⏱️ Duración del audio: ${audioDuration.toFixed(0)}ms`);
+
+        // Detener player anterior
+        this.stopCurrentPlayer();
+
+        if (audioDuration < fixedDuration) {
+            // Audio es más corto → repetir hasta llenar 2.6s
+            const repetitions = Math.floor(fixedDuration / audioDuration);
+            const remainder = fixedDuration - (repetitions * audioDuration);
+
+            console.log(`🔁 Repetir ${repetitions} veces + ${remainder.toFixed(0)}ms extra`);
+
+            for (let i = 0; i < repetitions; i++) {
+                setTimeout(() => {
+                    const player = new window.Tone.Player({
+                        url: this.audioUrl,
+                        playbackRate: basePlaybackRate,
+                        loop: false,
+                        onload: () => player.start()
+                    }).toDestination();
+
+                    // Guardar referencia solo del último
+                    if (i === repetitions - 1) {
+                        this.currentPlayer = player;
+                    }
+                }, i * audioDuration);
+            }
+        } else {
+            // Audio es más largo → reproducir y se corta automáticamente a los 2.6s
+            console.log(`✂️ Audio se cortará a los 2.6s`);
+
+            this.currentPlayer = new window.Tone.Player({
+                url: this.audioUrl,
+                playbackRate: basePlaybackRate,
+                loop: false,
+                onload: () => {
+                    this.currentPlayer.start();
+                    // Detener automáticamente a los 2.6s
+                    setTimeout(() => {
+                        if (this.currentPlayer) {
+                            this.currentPlayer.stop();
+                        }
+                    }, fixedDuration);
+                }
+            }).toDestination();
+        }
+    }
+
+    stopCurrentPlayer() {
         if (this.currentPlayer) {
             try {
+                this.currentPlayer.stop();
                 this.currentPlayer.disconnect();
                 this.currentPlayer.dispose();
-            } catch (e) {}
-        }
-
-        // Usar la URL directamente en lugar del buffer
-        this.currentPlayer = new window.Tone.Player({
-            url: this.audioUrl,
-            playbackRate: playbackRate,
-            volume: volume,
-            loop: false,
-            onload: () => {
-                // Player cargado y listo
-                this.currentPlayer.start();
+                this.currentPlayer = null;
+            } catch (e) {
+                console.error('Error deteniendo player anterior:', e);
             }
-        }).connect(this.pitchShift);
-
-        // Calcular duración real del audio considerando playbackRate
-        const originalDuration = this.audioBuffer.duration;
-        const actualDuration = (originalDuration / playbackRate) * 1000; // en ms
-
-        return actualDuration;
+        }
     }
 
     stop() {
@@ -295,20 +213,6 @@ export class MentalHealthSonification {
                 console.error('Error deteniendo player:', e);
             }
         }
-
-        try {
-            this.panicNoise.stop();
-        } catch (e) {}
-
-        // Resetear parámetros a valores por defecto
-        this.pitchShift.pitch = 0;
-        this.tremolo.frequency.value = 0;
-        this.tremolo.depth.value = 0;
-        this.distortion.distortion = 0;
-        this.distortion.wet.value = 0;
-        this.breathFilter.frequency.value = 2000;
-        this.breathFilter.Q.value = 1;
-        this.reverb.wet.value = 0.2;
 
         window.Tone.Transport.stop();
         window.Tone.Transport.cancel();
@@ -396,8 +300,8 @@ export class MentalHealthSonification {
         // Iniciar contexto de audio
         await window.Tone.start();
 
-        // Esperar a que todo esté listo
-        while (!this.audioLoaded || !this.reverbReady) {
+        // Esperar a que el audio esté cargado
+        while (!this.audioLoaded) {
             await new Promise(resolve => setTimeout(resolve, 100));
         }
 
@@ -413,39 +317,43 @@ export class MentalHealthSonification {
 
         console.log(`🎵 Reproduciendo punto único: salud mental ${dataPoint.avgMentalHealth.toFixed(1)}`);
 
-        // Reproducir 3 ciclos de respiración para este punto
-        const breathDuration = this.triggerBreath(dataPoint);
-        const pauseBetweenBreaths = 400;
+        // Calcular playbackRate simple para punto único
+        const playbackRate = 2.5 - (dataPoint.avgMentalHealth * 0.2);
 
-        for (let i = 1; i < 3; i++) {
-            setTimeout(() => {
-                if (!this.isPlaying) { // Solo si no está reproduciendo la secuencia completa
-                    this.triggerBreath(dataPoint);
-                }
-            }, i * (breathDuration + pauseBetweenBreaths));
-        }
+        // Reproducir una sola vez
+        this.stopCurrentPlayer();
 
-        // Limpiar resaltado después de las respiraciones
+        this.currentPlayer = new window.Tone.Player({
+            url: this.audioUrl,
+            playbackRate: playbackRate,
+            loop: false,
+            onload: () => {
+                this.currentPlayer.start();
+            }
+        }).toDestination();
+
+        // Limpiar resaltado después de la reproducción
+        const originalDuration = this.audioBuffer.duration;
+        const audioDuration = (originalDuration / playbackRate) * 1000;
+
         setTimeout(() => {
             if (!this.isPlaying) {
                 this.clearHighlight();
             }
-        }, 3 * (breathDuration + pauseBetweenBreaths));
+        }, audioDuration);
     }
 
     dispose() {
         this.stop();
 
-        // Limpiar todos los componentes de audio
+        // Limpiar player
         if (this.currentPlayer) {
             this.currentPlayer.dispose();
         }
-        this.breathFilter.dispose();
-        this.pitchShift.dispose();
-        this.distortion.dispose();
-        this.reverb.dispose();
-        this.tremolo.dispose();
-        this.panicNoise.dispose();
-        this.panicFilter.dispose();
+
+        // Limpiar buffer
+        if (this.audioBuffer) {
+            this.audioBuffer.dispose();
+        }
     }
 }

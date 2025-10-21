@@ -42,7 +42,7 @@ export function createPromedioSueñoChart(data) {
     function calculateAverage(sleepHours) {
         return sleepHours.reduce((sum, sleep) => sum + sleep, 0) / sleepHours.length;
     }
-    
+
     const trace = createSleepTrace(averageData);
 
     function createSleepTrace(data) {
@@ -84,7 +84,7 @@ export function createPromedioSueñoChart(data) {
             maxDecreasePoint = averageData[i].usage;
         }
     }
-    
+
     // Get responsive font sizes
     const fontSizes = getResponsiveFontSizes('chart-promedio');
 
@@ -150,7 +150,7 @@ export function createPromedioSueñoChart(data) {
         }],
         annotations: [{
             x: maxDecreasePoint + 0.1,
-            y: 4.5,
+            y: 2.5,
             text: `A partir de ${maxDecreasePoint.toFixed(1)} hrs<br> se nota una caída<br> en las horas de sueño`,
             showarrow: true,
             arrowhead: 2,
@@ -168,12 +168,12 @@ export function createPromedioSueñoChart(data) {
         },
         ...(sevenHourSleep ? [{
             x: 6.98,
-            y: sevenHourSleep - 0.1,
+            y: sevenHourSleep + 1,
             text: `A las 7 hrs se registra<br>una disminución del<br>${percentageDecrease}% en las hrs de sueño`,
             showarrow: true,
             arrowhead: 2,
-            ax: -120,
-            ay: 0,
+            ax: -12,
+            ay: -100,
             font: {
                 size: fontSizes.annotation,
                 color: 'black',
@@ -187,7 +187,7 @@ export function createPromedioSueñoChart(data) {
         autosize: true,
         margin: { l: 150, r: 80, t: 180, b: 120 }
     };
-    
+
     const config = {
         responsive: true,
         displayModeBar: false

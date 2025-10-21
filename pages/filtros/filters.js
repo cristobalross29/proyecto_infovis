@@ -42,7 +42,9 @@ export class DataFilters {
     }
 
     passesPlatformFilter(entry) {
+        // Si no hay plataformas seleccionadas, mostrar todas
         if (this.filterConfig.platforms.length === 0) return true;
+        // Si hay plataformas seleccionadas, verificar si la entrada coincide con alguna
         return this.filterConfig.platforms.includes(entry.Most_Used_Platform);
     }
 
@@ -153,11 +155,12 @@ export class FilterUI {
             genders.push(selectedGender);
         }
 
+        // Obtener todas las plataformas seleccionadas (checkboxes)
         const platforms = [];
-        const selectedPlatform = document.querySelector('input[name="platform"]:checked').value;
-        if (selectedPlatform !== 'all') {
-            platforms.push(selectedPlatform);
-        }
+        const platformCheckboxes = document.querySelectorAll('.platform-checkbox:checked');
+        platformCheckboxes.forEach(checkbox => {
+            platforms.push(checkbox.value);
+        });
 
         return {
             ageMin: parseInt(document.getElementById('age-min').value),
@@ -185,8 +188,10 @@ export class FilterUI {
         // Reset gender radio buttons
         document.getElementById('gender-both').checked = true;
 
-        // Reset platform radio buttons
-        document.getElementById('platform-all').checked = true;
+        // Reset platform checkboxes (desmarcar todos)
+        document.querySelectorAll('.platform-checkbox').forEach(checkbox => {
+            checkbox.checked = false;
+        });
 
         // Update displays
         this.updateDisplayValues();

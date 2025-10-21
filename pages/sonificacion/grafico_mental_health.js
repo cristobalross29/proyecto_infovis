@@ -109,8 +109,7 @@ export function createMentalHealthChart(data) {
                     family: 'Arial, sans-serif'
                 }
             },
-            showgrid: true,
-            gridcolor: 'rgba(200, 200, 200, 0.3)',
+            showgrid: false,
             showline: true,
             linewidth: 2,
             linecolor: 'black',
@@ -128,8 +127,7 @@ export function createMentalHealthChart(data) {
                 }
             },
             range: [1, 10],
-            showgrid: true,
-            gridcolor: 'rgba(200, 200, 200, 0.3)',
+            showgrid: false,
             showline: true,
             linewidth: 2,
             linecolor: 'black',
@@ -138,6 +136,8 @@ export function createMentalHealthChart(data) {
                 family: 'Arial, sans-serif'
             }
         },
+        plot_bgcolor: 'white',
+        paper_bgcolor: 'white',
         autosize: true,
         margin: { l: 100, r: 80, t: 150, b: 100 },
         hovermode: 'closest',

@@ -6,18 +6,69 @@ export class MentalHealthSonification {
         this.isPlaying = false;
         this.currentStep = 0;
         this.chartData = null;
+        this.breathInterval = null;
 
-        // Sintetizador principal para la melodía descendente (muy melancólica)
-        this.mainSynth = new window.Tone.Synth({
-            oscillator: { type: 'sine' },
-            envelope: {
-                attack: 0.5,    // Ataque muy lento = más suave y triste
-                decay: 0.8,
-                sustain: 0.7,
-                release: 2.5    // Release muy largo = más melancólico
+        // === INHALACIÓN (aire entrando) ===
+        // Sintetizador para el flujo de aire (tono descendente = inhalando)
+        this.inhaleSynth = new window.Tone.Synth({
+            oscillator: {
+                type: 'sine'
             },
-            volume: -6
+            envelope: {
+                attack: 0.05,
+                decay: 0.1,
+                sustain: 0.6,
+                release: 0.1
+            },
+            volume: -18
         }).toDestination();
+
+        // Ruido de aire para la inhalación
+        this.inhaleNoise = new window.Tone.Noise({
+            type: 'pink',
+            volume: -25
+        }).toDestination();
+
+        // Filtro para inhalación (más grave = aire entrando)
+        this.inhaleFilter = new window.Tone.Filter({
+            type: 'lowpass',
+            frequency: 400,
+            rolloff: -12
+        }).toDestination();
+
+        this.inhaleSynth.connect(this.inhaleFilter);
+        this.inhaleNoise.connect(this.inhaleFilter);
+
+        // === EXHALACIÓN (aire saliendo) ===
+        // Sintetizador para suspiro/exhalación (tono descendente más lento)
+        this.exhaleSynth = new window.Tone.Synth({
+            oscillator: {
+                type: 'sine'
+            },
+            envelope: {
+                attack: 0.02,
+                decay: 0.15,
+                sustain: 0.5,
+                release: 0.6
+            },
+            volume: -16
+        }).toDestination();
+
+        // Ruido de aire para la exhalación
+        this.exhaleNoise = new window.Tone.Noise({
+            type: 'brown',
+            volume: -22
+        }).toDestination();
+
+        // Filtro para exhalación (más agudo = aire saliendo)
+        this.exhaleFilter = new window.Tone.Filter({
+            type: 'lowpass',
+            frequency: 600,
+            rolloff: -12
+        }).toDestination();
+
+        this.exhaleSynth.connect(this.exhaleFilter);
+        this.exhaleNoise.connect(this.exhaleFilter);
     }
 
     setData(chartData) {
@@ -45,42 +96,142 @@ export class MentalHealthSonification {
         }
 
         const dataPoint = this.chartData[this.currentStep];
-        const now = window.Tone.now();
 
         // Resaltar punto actual en el gráfico
         this.highlightPoint(this.currentStep);
 
-        // Sonificar el punto actual
-        this.sonifyDataPoint(dataPoint, now);
+        // Producir respiración completa (inhalar + exhalar)
+        this.triggerBreath(dataPoint);
 
         this.currentStep++;
 
-        // Velocidad de reproducción: MÁS LENTA con peor salud mental (más dramático)
-        const playbackSpeed = dataPoint.avgMentalHealth > 7 ? 700 :
-                             dataPoint.avgMentalHealth > 5 ? 900 :
-                             dataPoint.avgMentalHealth > 3 ? 1100 : 1400;
-        setTimeout(() => this.playSequence(), playbackSpeed);
+        // Calcular duración total de la respiración para espaciar correctamente
+        const inhaleDuration = dataPoint.avgMentalHealth >= 8 ? 1.8 :
+                              dataPoint.avgMentalHealth >= 6 ? 1.2 :
+                              dataPoint.avgMentalHealth >= 4 ? 0.7 :
+                              dataPoint.avgMentalHealth >= 2 ? 0.4 : 0.25;
+
+        const exhaleDuration = dataPoint.avgMentalHealth >= 8 ? 2.2 :
+                              dataPoint.avgMentalHealth >= 6 ? 1.5 :
+                              dataPoint.avgMentalHealth >= 4 ? 0.9 :
+                              dataPoint.avgMentalHealth >= 2 ? 0.5 : 0.3;
+
+        const pauseDuration = dataPoint.avgMentalHealth >= 8 ? 0.3 :
+                             dataPoint.avgMentalHealth >= 6 ? 0.2 :
+                             dataPoint.avgMentalHealth >= 4 ? 0.1 : 0.05;
+
+        // Pausa después de completar respiración (más corta con peor salud)
+        const restPause = dataPoint.avgMentalHealth >= 8 ? 1500 :
+                         dataPoint.avgMentalHealth >= 6 ? 800 :
+                         dataPoint.avgMentalHealth >= 4 ? 400 :
+                         dataPoint.avgMentalHealth >= 2 ? 200 : 100;
+
+        // Tiempo total = inhalar + pausa + exhalar + descanso
+        const totalInterval = (inhaleDuration + pauseDuration + exhaleDuration) * 1000 + restPause;
+
+        setTimeout(() => this.playSequence(), totalInterval);
     }
 
-    sonifyDataPoint(dataPoint, startTime = window.Tone.now()) {
+    triggerBreath(dataPoint) {
         const { avgMentalHealth } = dataPoint;
+        const now = window.Tone.now();
 
-        // Melodía principal: frecuencia DISMINUYE DRÁSTICAMENTE con menor salud mental
-        // Rango más amplio: 1100 Hz (salud alta) a 165 Hz (salud baja) - cambio muy notable
-        const baseFreq = 165 + (avgMentalHealth / 10) * 935;
-        const mainNote = window.Tone.Frequency(baseFreq).toNote();
+        // === MAPEO CLARO DE SALUD MENTAL A PARÁMETROS ===
+        // 10-8: Respiración muy tranquila y profunda (3-4 seg total)
+        // 7-5: Respiración normal (2-2.5 seg total)
+        // 4-3: Respiración acelerada (1-1.5 seg total)
+        // <3: Hiperventilación/pánico (0.5-0.8 seg total)
 
-        // Nota principal con duración MUY larga para efecto muy melancólico
-        const mainDuration = avgMentalHealth > 7 ? '2n' : avgMentalHealth > 5 ? '1n' : '1n.'; // Más largo = más triste
-        this.mainSynth.triggerAttackRelease(mainNote, mainDuration, startTime);
+        // Duración de inhalación: más corta con peor salud
+        const inhaleDuration = avgMentalHealth >= 8 ? 1.8 :
+                              avgMentalHealth >= 6 ? 1.2 :
+                              avgMentalHealth >= 4 ? 0.7 :
+                              avgMentalHealth >= 2 ? 0.4 : 0.25;
+
+        // Duración de exhalación: más corta con peor salud
+        const exhaleDuration = avgMentalHealth >= 8 ? 2.2 :
+                              avgMentalHealth >= 6 ? 1.5 :
+                              avgMentalHealth >= 4 ? 0.9 :
+                              avgMentalHealth >= 2 ? 0.5 : 0.3;
+
+        // Pausa entre inhalación y exhalación (se acorta con ansiedad)
+        const pauseDuration = avgMentalHealth >= 8 ? 0.3 :
+                             avgMentalHealth >= 6 ? 0.2 :
+                             avgMentalHealth >= 4 ? 0.1 : 0.05;
+
+        // === TONO: Más agudo = más tensión ===
+        const inhaleFreq = avgMentalHealth >= 6 ? 150 : // Grave y relajado
+                          avgMentalHealth >= 4 ? 220 :  // Normal
+                          avgMentalHealth >= 2 ? 330 :  // Tenso
+                          440;                           // Muy tenso
+
+        const exhaleFreq = avgMentalHealth >= 6 ? 180 :
+                          avgMentalHealth >= 4 ? 250 :
+                          avgMentalHealth >= 2 ? 360 :
+                          480;
+
+        // === VOLUMEN: Más fuerte con peor salud (respiración forzada) ===
+        const inhaleVolume = avgMentalHealth >= 6 ? -20 : // Suave
+                            avgMentalHealth >= 4 ? -16 :  // Normal
+                            avgMentalHealth >= 2 ? -12 :  // Fuerte
+                            -8;                            // Muy fuerte
+
+        const exhaleVolume = avgMentalHealth >= 6 ? -18 :
+                            avgMentalHealth >= 4 ? -14 :
+                            avgMentalHealth >= 2 ? -10 :
+                            -6;
+
+        // === FILTRO: Más brillante con peor salud (respiración tensa) ===
+        const inhaleFilterFreq = avgMentalHealth >= 6 ? 350 :  // Suave y profundo
+                                avgMentalHealth >= 4 ? 500 :   // Normal
+                                avgMentalHealth >= 2 ? 700 :   // Más agudo
+                                900;                            // Muy agudo
+
+        const exhaleFilterFreq = avgMentalHealth >= 6 ? 450 :
+                                avgMentalHealth >= 4 ? 650 :
+                                avgMentalHealth >= 2 ? 850 :
+                                1100;
+
+        // === PASO 1: INHALACIÓN (aire entrando) ===
+        this.inhaleSynth.volume.value = inhaleVolume;
+        this.inhaleFilter.frequency.value = inhaleFilterFreq;
+
+        // Tono de inhalación (sube ligeramente para simular aire entrando)
+        this.inhaleSynth.frequency.setValueAtTime(inhaleFreq * 0.9, now);
+        this.inhaleSynth.frequency.exponentialRampToValueAtTime(inhaleFreq, now + inhaleDuration);
+        this.inhaleSynth.triggerAttackRelease(inhaleDuration, now);
+
+        // Ruido de aire para inhalación
+        this.inhaleNoise.start(now);
+        this.inhaleNoise.stop(now + inhaleDuration);
+
+        // === PASO 2: EXHALACIÓN (aire saliendo) - después de pausa ===
+        const exhaleStart = now + inhaleDuration + pauseDuration;
+
+        this.exhaleSynth.volume.value = exhaleVolume;
+        this.exhaleFilter.frequency.value = exhaleFilterFreq;
+
+        // Tono de exhalación (baja para simular aire saliendo - suspiro)
+        this.exhaleSynth.frequency.setValueAtTime(exhaleFreq, exhaleStart);
+        this.exhaleSynth.frequency.exponentialRampToValueAtTime(exhaleFreq * 0.7, exhaleStart + exhaleDuration);
+        this.exhaleSynth.triggerAttackRelease(exhaleDuration, exhaleStart);
+
+        // Ruido de aire para exhalación (más prolongado)
+        this.exhaleNoise.start(exhaleStart);
+        this.exhaleNoise.stop(exhaleStart + exhaleDuration);
     }
 
     stop() {
         this.isPlaying = false;
         this.currentStep = 0;
 
-        // Detener el sintetizador
-        this.mainSynth.triggerRelease();
+        // Detener todos los sonidos
+        try {
+            this.inhaleNoise.stop();
+            this.exhaleNoise.stop();
+        } catch (e) {
+            // Ignorar si ya están detenidos
+        }
 
         window.Tone.Transport.stop();
         window.Tone.Transport.cancel();
@@ -176,19 +327,45 @@ export class MentalHealthSonification {
         // Resaltar punto clickeado
         this.highlightPoint(pointIndex);
 
-        // Reproducir sonificación del punto
-        this.sonifyDataPoint(dataPoint);
+        // Calcular duración de una respiración completa
+        const inhaleDuration = dataPoint.avgMentalHealth >= 8 ? 1.8 :
+                              dataPoint.avgMentalHealth >= 6 ? 1.2 :
+                              dataPoint.avgMentalHealth >= 4 ? 0.7 :
+                              dataPoint.avgMentalHealth >= 2 ? 0.4 : 0.25;
 
-        // Limpiar resaltado después de 2 segundos
+        const exhaleDuration = dataPoint.avgMentalHealth >= 8 ? 2.2 :
+                              dataPoint.avgMentalHealth >= 6 ? 1.5 :
+                              dataPoint.avgMentalHealth >= 4 ? 0.9 :
+                              dataPoint.avgMentalHealth >= 2 ? 0.5 : 0.3;
+
+        const pauseDuration = dataPoint.avgMentalHealth >= 8 ? 0.3 :
+                             dataPoint.avgMentalHealth >= 6 ? 0.2 :
+                             dataPoint.avgMentalHealth >= 4 ? 0.1 : 0.05;
+
+        const breathCycleDuration = (inhaleDuration + pauseDuration + exhaleDuration) * 1000;
+
+        // Reproducir 3 ciclos de respiración para este punto
+        for (let i = 0; i < 3; i++) {
+            setTimeout(() => {
+                this.triggerBreath(dataPoint);
+            }, i * (breathCycleDuration + 500));
+        }
+
+        // Limpiar resaltado después de las respiraciones
         setTimeout(() => {
             if (!this.isPlaying) {
                 this.clearHighlight();
             }
-        }, 2000);
+        }, 3 * (breathCycleDuration + 500));
     }
 
     dispose() {
         this.stop();
-        this.mainSynth.dispose();
+        this.inhaleSynth.dispose();
+        this.inhaleNoise.dispose();
+        this.inhaleFilter.dispose();
+        this.exhaleSynth.dispose();
+        this.exhaleNoise.dispose();
+        this.exhaleFilter.dispose();
     }
 }

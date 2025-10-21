@@ -2,10 +2,12 @@ import { getResponsiveFontSizes, updateChartResponsiveness } from '../../respons
 
 export function createPromedioSueñoChart(data) {
     const MAX_HOURS = 7;
+    const MIN_HOURS = 0;
 
     const validData = filterValidData(data);
     const groupedData = groupDataByUsageHours(validData);
     const averageData = calculateAverages(groupedData);
+    const { minUsage, maxUsage } = findDataRange(averageData);
 
     function filterValidData(rawData) {
         return rawData
@@ -42,7 +44,17 @@ export function createPromedioSueñoChart(data) {
     function calculateAverage(sleepHours) {
         return sleepHours.reduce((sum, sleep) => sum + sleep, 0) / sleepHours.length;
     }
-    
+
+    function findDataRange(data) {
+        if (data.length === 0) {
+            return { minUsage: MIN_HOURS, maxUsage: MAX_HOURS };
+        }
+        return {
+            minUsage: Math.min(...data.map(d => d.usage)),
+            maxUsage: Math.max(...data.map(d => d.usage))
+        };
+    }
+
     const trace = createSleepTrace(averageData);
 
     function createSleepTrace(data) {
@@ -84,7 +96,7 @@ export function createPromedioSueñoChart(data) {
             maxDecreasePoint = averageData[i].usage;
         }
     }
-    
+
     // Get responsive font sizes
     const fontSizes = getResponsiveFontSizes('chart-promedio');
 
@@ -110,7 +122,10 @@ export function createPromedioSueñoChart(data) {
             showline: true,
             linewidth: 2,
             linecolor: 'black',
-            range: [0, null],
+            range: [0, 7.5],
+            fixedrange: true,
+            tickmode: 'linear',
+            tick0: 0,
             tickfont: {
                 size: fontSizes.tick,
                 family: 'Arial'
@@ -136,58 +151,115 @@ export function createPromedioSueñoChart(data) {
                 family: 'Arial'
             }
         },
-        shapes: [{
-            type: 'line',
-            x0: maxDecreasePoint,
-            x1: maxDecreasePoint,
-            y0: 0,
-            y1: 10,
-            line: {
-                color: 'red',
-                width: 2,
-                dash: 'dash'
+        shapes: [
+            // Área gris al inicio si no hay datos desde 0
+            ...(minUsage > MIN_HOURS ? [{
+                type: 'rect',
+                x0: MIN_HOURS,
+                x1: minUsage,
+                y0: 0,
+                y1: 10,
+                fillcolor: 'rgba(200, 200, 200, 0.3)',
+                line: {
+                    width: 0
+                },
+                layer: 'below'
+            }] : []),
+            // Área gris al final si no hay datos hasta 7
+            ...(maxUsage < MAX_HOURS ? [{
+                type: 'rect',
+                x0: maxUsage,
+                x1: MAX_HOURS,
+                y0: 0,
+                y1: 10,
+                fillcolor: 'rgba(200, 200, 200, 0.3)',
+                line: {
+                    width: 0
+                },
+                layer: 'below'
+            }] : []),
+            // Línea roja vertical
+            {
+                type: 'line',
+                x0: maxDecreasePoint,
+                x1: maxDecreasePoint,
+                y0: 0,
+                y1: 10,
+                line: {
+                    color: 'red',
+                    width: 2,
+                    dash: 'dash'
+                }
             }
-        }],
-        annotations: [{
-            x: maxDecreasePoint + 0.1,
-            y: 4.5,
-            text: `A partir de ${maxDecreasePoint.toFixed(1)} hrs<br> se nota una caída<br> en las horas de sueño`,
-            showarrow: true,
-            arrowhead: 2,
-            ax: 120,
-            ay: 0,
-            font: {
-                size: fontSizes.annotation,
-                color: 'black',
-                family: 'Arial'
+        ],
+        annotations: [
+            // Texto "Sin Datos" al inicio si no hay datos desde 0
+            ...(minUsage > MIN_HOURS ? [{
+                x: (MIN_HOURS + minUsage) / 2,
+                y: 5,
+                text: 'Sin Datos',
+                textangle: -90,
+                showarrow: false,
+                font: {
+                    size: fontSizes.title * 1.6,
+                    color: 'rgba(100, 100, 100, 0.8)',
+                    family: 'Arial'
+                }
+            }] : []),
+            // Texto "Sin Datos" al final si no hay datos hasta 7
+            ...(maxUsage < MAX_HOURS ? [{
+                x: (maxUsage + MAX_HOURS) / 2,
+                y: 5,
+                text: 'Sin Datos',
+                textangle: -90,
+                showarrow: false,
+                font: {
+                    size: fontSizes.title * 0.6,
+                    color: 'rgba(100, 100, 100, 0.8)',
+                    family: 'Arial'
+                }
+            }] : []),
+            {
+                x: maxDecreasePoint + 0.1,
+                y: 2.5,
+                text: `A partir de ${maxDecreasePoint.toFixed(1)} hrs<br> se nota una caída<br> en las horas de sueño`,
+                showarrow: true,
+                arrowhead: 2,
+                ax: 120,
+                ay: 0,
+                font: {
+                    size: fontSizes.annotation,
+                    color: 'black',
+                    family: 'Arial'
+                },
+                bgcolor: "rgba(255, 255, 255, 1)",
+                bordercolor: "black",
+                borderwidth: 1,
+                borderpad: 4
             },
-            bgcolor: "rgba(255, 255, 255, 1)",
-            bordercolor: "black",
-            borderwidth: 1,
-            borderpad: 4
-        },
-        ...(sevenHourSleep ? [{
-            x: 6.98,
-            y: sevenHourSleep - 0.1,
-            text: `A las 7 hrs se registra<br>una disminución del<br>${percentageDecrease}% en las hrs de sueño`,
-            showarrow: true,
-            arrowhead: 2,
-            ax: -120,
-            ay: 0,
-            font: {
-                size: fontSizes.annotation,
-                color: 'black',
-                family: 'Arial'
-            },
-            bgcolor: "rgba(255, 255, 255, 1)",
-            bordercolor: "black",
-            borderwidth: 1,
-            borderpad: 4
-        }] : [])],
+            ...(sevenHourSleep ? [{
+                x: 6.98,
+                y: sevenHourSleep + 1,
+                text: `A las 7 hrs se registra<br>una disminución del<br>${percentageDecrease}% en las hrs de sueño`,
+                showarrow: true,
+                arrowhead: 2,
+                ax: -12,
+                ay: -100,
+                font: {
+                    size: fontSizes.annotation,
+                    color: 'black',
+                    family: 'Arial'
+                },
+                bgcolor: "rgba(255, 255, 255, 1)",
+                bordercolor: "black",
+                borderwidth: 1,
+                borderpad: 4
+            }] : [])
+        ],
         autosize: true,
         margin: { l: 150, r: 80, t: 180, b: 120 }
     };
-    
+
     const config = {
         responsive: true,
         displayModeBar: false

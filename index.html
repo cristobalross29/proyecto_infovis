@@ -38,12 +38,12 @@
         .filter-panel {
             background: white;
             border-radius: 0.625rem;
-            padding: 0.9375rem;
+            padding: 1.25rem;
             margin: 0 auto 1.875rem;
             max-width: 90.75rem;
             display: flex;
-            gap: 1rem;
-            align-items: flex-start;
+            gap: 2.5rem;
+            align-items: center;
             flex-wrap: wrap;
             transition: all 0.3s ease;
         }
@@ -56,8 +56,7 @@
             margin: 0 auto;
             border-radius: 0;
             z-index: 1000;
-            box-shadow: 0 0.125rem 0.5rem rgba(0, 0, 0, 0.1);
-            padding: 0.625rem 0.9375rem;
+            padding: 1rem 1.25rem;
         }
 
         .filter-panel.sticky .filter-title {
@@ -70,16 +69,16 @@
 
         .filter-panel-placeholder.active {
             display: block;
-            height: 10rem;
+            height: 6rem;
         }
 
         .filter-section {
             flex: 1;
             min-width: 15rem;
-            padding: 1rem;
-            border: 0.0625rem solid #000;
-            border-radius: 0.5rem;
-            background: #ffffff;
+            padding: 0;
+            border: none;
+            border-radius: 0;
+            background: transparent;
         }
 
         .filter-section.filter-section-platform {
@@ -475,11 +474,8 @@
     <h1>¿Cuántas horas en redes sociales son demasiadas?</h1>
 
     <!-- SECCIÓN 1: FILTROS -->
-    <h2 class="section-title">📊 Visualización con Filtros</h2>
-
     <div class="filter-panel-placeholder"></div>
     <div class="filter-panel" id="filter-panel">
-        <h3 class="filter-title" style="color: #2c3e50;">Filtros de Datos</h3>
 
         <!-- Filtro de Rango de Edad -->
         <div class="filter-section">
@@ -516,56 +512,49 @@
             <label>Red Social:</label>
             <div class="platform-grid">
                 <div class="platform-item">
-                    <input type="radio" id="platform-all" class="auto-filter" name="platform" value="all" checked>
-                    <label for="platform-all">
-                        <img src="https://cdn-icons-png.flaticon.com/512/709/709579.png" alt="Todas" class="platform-icon">
-                        Todas
-                    </label>
-                </div>
-                <div class="platform-item">
-                    <input type="radio" id="platform-instagram" class="auto-filter" name="platform" value="Instagram">
+                    <input type="checkbox" id="platform-instagram" class="auto-filter platform-checkbox" value="Instagram">
                     <label for="platform-instagram">
                         <img src="https://upload.wikimedia.org/wikipedia/commons/a/a5/Instagram_icon.png" alt="Instagram" class="platform-icon">
                         Instagram
                     </label>
                 </div>
                 <div class="platform-item">
-                    <input type="radio" id="platform-facebook" class="auto-filter" name="platform" value="Facebook">
+                    <input type="checkbox" id="platform-facebook" class="auto-filter platform-checkbox" value="Facebook">
                     <label for="platform-facebook">
                         <img src="https://upload.wikimedia.org/wikipedia/commons/5/51/Facebook_f_logo_%282019%29.svg" alt="Facebook" class="platform-icon">
                         Facebook
                     </label>
                 </div>
                 <div class="platform-item">
-                    <input type="radio" id="platform-tiktok" class="auto-filter" name="platform" value="TikTok">
+                    <input type="checkbox" id="platform-tiktok" class="auto-filter platform-checkbox" value="TikTok">
                     <label for="platform-tiktok">
                         <img src="https://cdn-icons-png.flaticon.com/512/3046/3046121.png" alt="TikTok" class="platform-icon">
                         TikTok
                     </label>
                 </div>
                 <div class="platform-item">
-                    <input type="radio" id="platform-twitter" class="auto-filter" name="platform" value="Twitter">
+                    <input type="checkbox" id="platform-twitter" class="auto-filter platform-checkbox" value="Twitter">
                     <label for="platform-twitter">
                         <img src="https://cdn-icons-png.flaticon.com/512/733/733579.png" alt="Twitter" class="platform-icon">
                         Twitter
                     </label>
                 </div>
                 <div class="platform-item">
-                    <input type="radio" id="platform-whatsapp" class="auto-filter" name="platform" value="WhatsApp">
+                    <input type="checkbox" id="platform-whatsapp" class="auto-filter platform-checkbox" value="WhatsApp">
                     <label for="platform-whatsapp">
                         <img src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg" alt="WhatsApp" class="platform-icon">
                         WhatsApp
                     </label>
                 </div>
                 <div class="platform-item">
-                    <input type="radio" id="platform-youtube" class="auto-filter" name="platform" value="YouTube">
+                    <input type="checkbox" id="platform-youtube" class="auto-filter platform-checkbox" value="YouTube">
                     <label for="platform-youtube">
                         <img src="https://cdn-icons-png.flaticon.com/512/1384/1384060.png" alt="YouTube" class="platform-icon">
                         YouTube
                     </label>
                 </div>
                 <div class="platform-item">
-                    <input type="radio" id="platform-snapchat" class="auto-filter" name="platform" value="Snapchat">
+                    <input type="checkbox" id="platform-snapchat" class="auto-filter platform-checkbox" value="Snapchat">
                     <label for="platform-snapchat">
                         <img src="https://cdn-icons-png.flaticon.com/512/3669/3669965.png" alt="Snapchat" class="platform-icon">
                         Snapchat

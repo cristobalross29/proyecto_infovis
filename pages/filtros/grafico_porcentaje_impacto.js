@@ -34,6 +34,34 @@ export function createPorcentajeImpactoChart(data) {
         return total > 0 ? (groupedData[hour].Yes / total) * 100 : 0;
     });
 
+    // Extrapolar datos hasta MAX_HOURS si no existen
+    const maxHourWithData = Math.max(...sortedHours);
+    if (maxHourWithData < MAX_HOURS && sortedHours.length > 0) {
+        // Encontrar los últimos dos puntos para calcular la tendencia
+        const lastIdx = sortedHours.length - 1;
+        const lastHour = sortedHours[lastIdx];
+        const lastPercentage = percentageAffected[lastIdx];
+
+        let slope = 0;
+        if (sortedHours.length >= 2) {
+            const prevIdx = lastIdx - 1;
+            const prevHour = sortedHours[prevIdx];
+            const prevPercentage = percentageAffected[prevIdx];
+            slope = (lastPercentage - prevPercentage) / (lastHour - prevHour);
+        }
+
+        // Extrapolar hasta MAX_HOURS
+        for (let hour = lastHour + MINUTES_INTERVAL; hour <= MAX_HOURS; hour += MINUTES_INTERVAL) {
+            const roundedHour = Math.round(hour * 2) / 2;
+            const extrapolatedValue = lastPercentage + slope * (roundedHour - lastHour);
+            // Limitar el valor extrapolado entre 0 y 100
+            const clampedValue = Math.max(0, Math.min(100, extrapolatedValue));
+
+            sortedHours.push(roundedHour);
+            percentageAffected.push(clampedValue);
+        }
+    }
+
     // Encontrar dinámicamente el punto donde comienza el impacto (primer porcentaje > 0)
     // La línea debe estar en el ÚLTIMO punto donde el porcentaje es 0
     let firstNonZeroX = null;

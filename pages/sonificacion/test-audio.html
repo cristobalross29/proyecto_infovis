@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test Audio</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.8.49/Tone.js"></script>
+</head>
+<body>
+    <h1>Test Audio Simple</h1>
+    <button id="test-btn">Probar Audio</button>
+    <div id="status"></div>
+
+    <script>
+        const status = document.getElementById('status');
+
+        // Probar si el archivo existe primero
+        fetch('9dbc5d02.mp3')
+            .then(response => {
+                if (response.ok) {
+                    status.innerHTML += '<p>✓ Archivo MP3 accesible vía fetch</p>';
+                } else {
+                    status.innerHTML += '<p>❌ No se puede acceder al archivo MP3</p>';
+                }
+            })
+            .catch(err => {
+                status.innerHTML += '<p>❌ Error de red: ' + err.message + '</p>';
+            });
+
+        // Crear player simple
+        const player = new Tone.Player({
+            url: '9dbc5d02.mp3',
+            onload: () => {
+                status.innerHTML += '<p>✓ Tone.js cargó el audio correctamente</p>';
+                status.innerHTML += '<p>Duración: ' + player.buffer.duration + ' segundos</p>';
+            },
+            onerror: (error) => {
+                status.innerHTML += '<p>❌ Tone.js error: ' + error + '</p>';
+            }
+        }).toDestination();
+
+        document.getElementById('test-btn').addEventListener('click', async () => {
+            await Tone.start();
+            status.innerHTML += '<p>🎵 Reproduciendo...</p>';
+            player.start();
+        });
+    </script>
+</body>
+</html>

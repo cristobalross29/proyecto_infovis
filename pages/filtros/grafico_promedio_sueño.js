@@ -79,11 +79,12 @@ export function createPromedioSueñoChart(data) {
         };
     }
 
-    // Calculate percentage decrease from baseline to 7 hours
+    // Calculate percentage decrease from baseline to maximum usage hour with data
     const baselineSleep = averageData.length > 0 ? averageData[0].avgSleep : 8;
-    const sevenHourData = averageData.find(d => d.usage === 7);
-    const sevenHourSleep = sevenHourData ? sevenHourData.avgSleep : null;
-    const percentageDecrease = sevenHourSleep ? Math.round(((baselineSleep - sevenHourSleep) / baselineSleep) * 100) : 0;
+    const lastHourData = averageData.length > 0 ? averageData[averageData.length - 1] : null;
+    const lastHourUsage = lastHourData ? lastHourData.usage : null;
+    const lastHourSleep = lastHourData ? lastHourData.avgSleep : null;
+    const percentageDecrease = lastHourSleep ? Math.round(((baselineSleep - lastHourSleep) / baselineSleep) * 100) : 0;
 
     // Encontrar dinámicamente el punto donde comienza la mayor caída en el sueño
     let maxDecreasePoint = 4; // valor por defecto
@@ -214,14 +215,14 @@ export function createPromedioSueñoChart(data) {
                 textangle: -90,
                 showarrow: false,
                 font: {
-                    size: fontSizes.title * 0.6,
+                    size: fontSizes.title * 1.6,
                     color: 'rgba(100, 100, 100, 0.8)',
                     family: 'Arial'
                 }
             }] : []),
             {
                 x: maxDecreasePoint + 0.1,
-                y: 2.5,
+                y: 1.8,
                 text: `A partir de ${maxDecreasePoint.toFixed(1)} hrs<br> se nota una caída<br> en las horas de sueño`,
                 showarrow: true,
                 arrowhead: 2,
@@ -237,10 +238,10 @@ export function createPromedioSueñoChart(data) {
                 borderwidth: 1,
                 borderpad: 4
             },
-            ...(sevenHourSleep ? [{
-                x: 6.98,
-                y: sevenHourSleep + 1,
-                text: `A las 7 hrs se registra<br>una disminución del<br>${percentageDecrease}% en las hrs de sueño`,
+            ...(lastHourSleep ? [{
+                x: lastHourUsage - 0.02,
+                y: lastHourSleep + 1,
+                text: `A las ${lastHourUsage.toFixed(1)} hrs se registra<br>una disminución del<br>${percentageDecrease}% en las hrs de sueño`,
                 showarrow: true,
                 arrowhead: 2,
                 ax: -12,

@@ -70,8 +70,8 @@ export function createMentalHealthChart(data) {
         type: 'scatter',
         name: 'Salud Mental',
         line: {
-            color: 'rgba(150, 50, 200, 0.8)',
-            width: 4,
+            color: 'black',
+            width: 2,
             shape: 'spline'
         },
         marker: {
@@ -84,9 +84,7 @@ export function createMentalHealthChart(data) {
             symbol: 'circle'
         },
         hovertemplate: '<b>Horas de uso:</b> %{x:.1f}h<br>' +
-                       '<b>Salud Mental (promedio):</b> %{y:.2f}<br>' +
-                       '<b>Usuarios:</b> %{text}<extra></extra>',
-        text: counts
+                       '<b>Salud Mental (promedio):</b> %{y:.2f}<extra></extra>'
     };
 
     // Get responsive font sizes

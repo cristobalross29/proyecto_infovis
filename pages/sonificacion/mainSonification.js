@@ -40,6 +40,15 @@ function setupMentalHealthAudioControls() {
     const playBtn = document.getElementById('play-btn-mental-health');
     const stopBtn = document.getElementById('stop-btn-mental-health');
     const statusDiv = document.getElementById('audio-status-mental-health');
+    const speedSlider = document.getElementById('speed-slider-mental-health');
+    const speedValue = document.getElementById('speed-value-mental-health');
+
+    // Setup speed slider
+    speedSlider.addEventListener('input', (e) => {
+        const speed = parseFloat(e.target.value);
+        speedValue.textContent = `${speed.toFixed(1)}x`;
+        mentalHealthSonification.setSpeedMultiplier(speed);
+    });
 
     playBtn.addEventListener('click', async () => {
         if (!mentalHealthChartData || mentalHealthChartData.length === 0) {

@@ -9,9 +9,10 @@ export class MentalHealthSonification {
         this.chartData = null;
         this.audioBuffer = null;
         this.audioLoaded = false;
+        this.speedMultiplier = 1.0; // Multiplicador de velocidad (1x a 5x)
 
         // Ruta del nuevo audio
-        this.audioUrl = 'pages/sonificacion/3-36681a89.mp3';
+        this.audioUrl = 'pages/sonificacion/1-36681a89.mp3';
 
         // Cargar el audio usando Tone.Buffer
         this.audioBuffer = new window.Tone.Buffer(
@@ -33,6 +34,11 @@ export class MentalHealthSonification {
 
     setData(chartData) {
         this.chartData = chartData;
+    }
+
+    setSpeedMultiplier(multiplier) {
+        this.speedMultiplier = multiplier;
+        console.log(`🎚️ Multiplicador de velocidad: ${multiplier.toFixed(1)}x`);
     }
 
     async play() {
@@ -70,118 +76,118 @@ export class MentalHealthSonification {
         // Resaltar punto actual en el gráfico
         this.highlightPoint(this.currentStep);
 
-        // Determinar si es el primer o último punto
-        const isFirst = pointIndex === 0;
+        // Determinar si es el último punto
         const isLast = pointIndex === totalPoints - 1;
 
-        // Reproducir audio con duración fija de 2.6 segundos
-        this.playAudioWithFixedDuration(dataPoint, isFirst, isLast);
+        // Reproducir audio y obtener la duración real
+        const audioDuration = this.playAudioAtSpeed(dataPoint, isLast);
 
         this.currentStep++;
 
-        // Todos los puntos duran exactamente 2.6 segundos
-        const fixedDuration = 2600; // ms
-
-        setTimeout(() => this.playSequence(), fixedDuration);
+        // Esperar la duración real del audio antes de pasar al siguiente
+        setTimeout(() => this.playSequence(), audioDuration);
     }
 
-    playAudioWithFixedDuration(dataPoint, isFirst, isLast) {
+    playAudioAtSpeed(dataPoint, isLast) {
         const { avgMentalHealth } = dataPoint;
-        const fixedDuration = 2600; // ms
 
         console.log(`🎵 Salud mental: ${avgMentalHealth.toFixed(1)}`);
 
-        // Calcular playbackRate base
-        let basePlaybackRate = 2.5 - (avgMentalHealth * 0.2);
-
-        // === PRIMER PUNTO: 1.3x más largo (más lento) ===
-        if (isFirst) {
-            basePlaybackRate = basePlaybackRate / 1.3;
-            console.log(`🌟 PRIMER PUNTO: Reproducción 1.3x más lenta`);
-        }
-
-        // === ÚLTIMO PUNTO: Repetir 3 veces rápido ===
-        if (isLast) {
-            console.log(`🔚 ÚLTIMO PUNTO: Repetir 3 veces en 2.6s`);
-
-            // Calcular playbackRate para que 3 repeticiones quepan en 2.6s
-            const originalDuration = this.audioBuffer.duration;
-            const durationPerRepetition = fixedDuration / 3 / 1000; // en segundos
-            const fastPlaybackRate = originalDuration / durationPerRepetition;
-
-            // Detener player anterior
-            this.stopCurrentPlayer();
-
-            // Reproducir 3 veces con pausas mínimas
-            for (let i = 0; i < 3; i++) {
-                setTimeout(() => {
-                    const player = new window.Tone.Player({
-                        url: this.audioUrl,
-                        playbackRate: fastPlaybackRate,
-                        loop: false,
-                        onload: () => player.start()
-                    }).toDestination();
-
-                    // Guardar referencia solo del último
-                    if (i === 2) {
-                        this.currentPlayer = player;
-                    }
-                }, i * (fixedDuration / 3));
-            }
-
-            return;
-        }
-
-        // === PUNTOS INTERMEDIOS ===
+        // Duración original del audio en segundos
         const originalDuration = this.audioBuffer.duration;
-        const audioDuration = (originalDuration / basePlaybackRate) * 1000; // en ms
-
-        console.log(`⚡ Velocidad base: ${basePlaybackRate.toFixed(2)}x`);
-        console.log(`⏱️ Duración del audio: ${audioDuration.toFixed(0)}ms`);
 
         // Detener player anterior
         this.stopCurrentPlayer();
 
-        if (audioDuration < fixedDuration) {
-            // Audio es más corto → repetir hasta llenar 2.6s
-            const repetitions = Math.floor(fixedDuration / audioDuration);
-            const remainder = fixedDuration - (repetitions * audioDuration);
+        // === ÚLTIMO PUNTO: Repetir 3 veces ===
+        if (isLast) {
+            console.log(`🔚 ÚLTIMO PUNTO: Repetir 3 veces`);
+            const playbackRate = 1.0; // Velocidad normal
 
-            console.log(`🔁 Repetir ${repetitions} veces + ${remainder.toFixed(0)}ms extra`);
+            // Duración de cada repetición
+            const singleDuration = (originalDuration / playbackRate) * 1000; // en ms
+            const totalDuration = singleDuration * 3;
 
-            for (let i = 0; i < repetitions; i++) {
+            // Reproducir 3 veces con la velocidad calculada
+            for (let i = 0; i < 3; i++) {
                 setTimeout(() => {
                     const player = new window.Tone.Player({
                         url: this.audioUrl,
-                        playbackRate: basePlaybackRate,
+                        playbackRate: playbackRate,
                         loop: false,
                         onload: () => player.start()
                     }).toDestination();
 
-                    // Guardar referencia solo del último
-                    if (i === repetitions - 1) {
+                    if (i === 2) {
                         this.currentPlayer = player;
                     }
-                }, i * audioDuration);
+                }, i * singleDuration);
             }
-        } else {
-            // Audio es más largo → reproducir y se corta automáticamente a los 2.6s
-            console.log(`✂️ Audio se cortará a los 2.6s`);
 
-            this.currentPlayer = new window.Tone.Player({
-                url: this.audioUrl,
-                playbackRate: basePlaybackRate,
-                loop: false,
-                onload: () => {
-                    this.currentPlayer.start();
-                    // Detener automáticamente a los 2.6s
-                    setTimeout(() => {
-                        if (this.currentPlayer) {
-                            this.currentPlayer.stop();
-                        }
-                    }, fixedDuration);
+            return totalDuration;
+        }
+
+        // === CÁLCULO DE VELOCIDAD SEGÚN SALUD MENTAL (INVERSO) ===
+        // Salud mental = 9 → velocidad 0.33x (3 veces más lento)
+        // Salud mental = 5 → velocidad 1x (normal/original)
+        // Interpolación lineal entre 5 y 9
+
+        let basePlaybackRate;
+
+        if (avgMentalHealth >= 9) {
+            basePlaybackRate = 0.33; // 3 veces más lento
+        } else if (avgMentalHealth <= 5) {
+            basePlaybackRate = 1.0; // Velocidad normal
+        } else {
+            // Interpolación lineal: y = mx + b
+            // Punto 1: (9, 0.33)  Punto 2: (5, 1.0)
+            // m = (1.0 - 0.33) / (5 - 9) = 0.67 / -4 = -0.1675
+            // Cuando x=9: y = -0.1675(9) + b → 0.33 = -1.5075 + b → b = 1.8375
+            basePlaybackRate = -0.1675 * avgMentalHealth + 1.8375;
+        }
+
+        // Aplicar multiplicador de velocidad
+        const playbackRate = basePlaybackRate * this.speedMultiplier;
+
+        this.currentPlayer = new window.Tone.Player({
+            url: this.audioUrl,
+            playbackRate: playbackRate,
+            loop: false,
+            onload: () => this.currentPlayer.start()
+        }).toDestination();
+
+        // Calcular duración real del audio con la velocidad aplicada
+        const actualDuration = (originalDuration / playbackRate) * 1000; // en ms
+
+        console.log(`⚡ Velocidad base: ${basePlaybackRate.toFixed(2)}x | Multiplicador: ${this.speedMultiplier.toFixed(1)}x | Final: ${playbackRate.toFixed(2)}x | Duración: ${actualDuration.toFixed(0)}ms`);
+
+        return actualDuration;
+    }
+
+    repeatAudio(times, totalDuration, originalDuration) {
+        // Calcular cuánto dura cada repetición
+        const durationPerRepetition = totalDuration / times / 1000; // en segundos
+
+        // Calcular playbackRate para que cada repetición quepa en su tiempo asignado
+        const playbackRate = originalDuration / durationPerRepetition;
+
+        console.log(`🔁 Repetir ${times} veces | Velocidad: ${playbackRate.toFixed(2)}x`);
+
+        // Reproducir múltiples veces
+        for (let i = 0; i < times; i++) {
+            setTimeout(() => {
+                const player = new window.Tone.Player({
+                    url: this.audioUrl,
+                    playbackRate: playbackRate,
+                    loop: false,
+                    onload: () => player.start()
+                }).toDestination();
+
+                // Guardar referencia solo del último
+                if (i === times - 1) {
+                    this.currentPlayer = player;
                 }
-            }).toDestination();
+            }, i * (totalDuration / times));
         }
     }
 
@@ -317,8 +323,24 @@ export class MentalHealthSonification {
 
         console.log(`🎵 Reproduciendo punto único: salud mental ${dataPoint.avgMentalHealth.toFixed(1)}`);
 
-        // Calcular playbackRate simple para punto único
-        const playbackRate = 2.5 - (dataPoint.avgMentalHealth * 0.2);
+        // Usar la MISMA lógica que playAudioAtSpeed
+        const { avgMentalHealth } = dataPoint;
+        const originalDuration = this.audioBuffer.duration;
+
+        // === CÁLCULO DE VELOCIDAD SEGÚN SALUD MENTAL (INVERSO) ===
+        let basePlaybackRate;
+
+        if (avgMentalHealth >= 9) {
+            basePlaybackRate = 0.33; // 3 veces más lento
+        } else if (avgMentalHealth <= 5) {
+            basePlaybackRate = 1.0; // Velocidad normal
+        } else {
+            // Interpolación lineal igual que en playAudioAtSpeed
+            basePlaybackRate = -0.1675 * avgMentalHealth + 1.8375;
+        }
+
+        // Aplicar multiplicador de velocidad
+        const playbackRate = basePlaybackRate * this.speedMultiplier;
 
         // Reproducir una sola vez
         this.stopCurrentPlayer();
@@ -332,10 +354,12 @@ export class MentalHealthSonification {
             }
         }).toDestination();
 
-        // Limpiar resaltado después de la reproducción
-        const originalDuration = this.audioBuffer.duration;
+        // Calcular duración real del audio
         const audioDuration = (originalDuration / playbackRate) * 1000;
 
+        console.log(`⚡ Velocidad base: ${basePlaybackRate.toFixed(2)}x | Multiplicador: ${this.speedMultiplier.toFixed(1)}x | Final: ${playbackRate.toFixed(2)}x | Duración: ${audioDuration.toFixed(0)}ms`);
+
+        // Limpiar resaltado después de la reproducción
         setTimeout(() => {
             if (!this.isPlaying) {
                 this.clearHighlight();

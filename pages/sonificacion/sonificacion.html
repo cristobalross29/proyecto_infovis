@@ -94,7 +94,7 @@
             gap: 15px;
             margin: 20px 0;
             padding: 15px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: #f5f5f5;
             border-radius: 8px;
         }
 
@@ -113,13 +113,14 @@
         }
 
         .audio-btn-play {
-            background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
-            color: white;
+            background: white;
+            color: black;
+            border: 0.125rem solid black;
         }
 
         .audio-btn-play:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 12px rgba(0,0,0,0.3);
+            transform: translateY(-0.125rem);
+            box-shadow: 0 0.375rem 0.75rem rgba(0,0,0,0.3);
         }
 
         .audio-btn-play:disabled {
@@ -129,23 +130,87 @@
         }
 
         .audio-btn-stop {
-            background: linear-gradient(135deg, #eb3349 0%, #f45c43 100%);
-            color: white;
+            background: white;
+            color: black;
+            border: 0.125rem solid black;
         }
 
         .audio-btn-stop:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 12px rgba(0,0,0,0.3);
+            transform: translateY(-0.125rem);
+            box-shadow: 0 0.375rem 0.75rem rgba(0,0,0,0.3);
         }
 
         .audio-info {
-            color: white;
+            color: black;
             font-size: 14px;
             font-weight: bold;
             padding: 8px 16px;
-            background: rgba(255,255,255,0.2);
+            background: white;
             border-radius: 15px;
-            backdrop-filter: blur(10px);
+            border: 0.125rem solid #ccc;
+        }
+
+        .speed-control {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin: 1.25rem 0;
+            padding: 1.25rem;
+            background: #ffffff;
+            border-radius: 0.5rem;
+            border: 0.125rem solid #000;
+            box-shadow: 0 0.125rem 0.5rem rgba(0,0,0,0.1);
+        }
+
+        .speed-control label {
+            font-weight: bold;
+            color: #2c3e50;
+            white-space: nowrap;
+            font-size: 1rem;
+        }
+
+        .speed-slider {
+            flex: 1;
+            height: 0.5rem;
+            border-radius: 0.3125rem;
+            background: #ddd;
+            outline: none;
+            -webkit-appearance: none;
+            appearance: none;
+            cursor: pointer;
+        }
+
+        .speed-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 1.5rem;
+            height: 1.5rem;
+            border-radius: 50%;
+            background: #2c3e50;
+            cursor: pointer;
+            border: 0.125rem solid #fff;
+            box-shadow: 0 0.125rem 0.25rem rgba(0,0,0,0.3);
+        }
+
+        .speed-slider::-moz-range-thumb {
+            width: 1.5rem;
+            height: 1.5rem;
+            border-radius: 50%;
+            background: #2c3e50;
+            cursor: pointer;
+            border: 0.125rem solid #fff;
+            box-shadow: 0 0.125rem 0.25rem rgba(0,0,0,0.3);
+        }
+
+        .speed-value {
+            min-width: 3.5rem;
+            text-align: center;
+            font-weight: bold;
+            color: #2c3e50;
+            font-size: 1.125rem;
+            background: #f0f0f0;
+            padding: 0.25rem 0.5rem;
+            border-radius: 0.25rem;
         }
 
         @media (max-width: 768px) {
@@ -224,6 +289,21 @@
                 ⏹️ Detener
             </button>
             <div id="audio-status-mental-health" class="audio-info">Listo para reproducir</div>
+        </div>
+
+        <!-- Control de velocidad -->
+        <div class="speed-control">
+            <label for="speed-slider-mental-health">Velocidad de reproducción:</label>
+            <input
+                type="range"
+                id="speed-slider-mental-health"
+                class="speed-slider"
+                min="1"
+                max="5"
+                step="0.1"
+                value="1"
+            >
+            <span class="speed-value" id="speed-value-mental-health">1.0x</span>
         </div>
 
         <div id="chart-mental-health" class="chart"></div>

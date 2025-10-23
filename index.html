@@ -391,8 +391,9 @@
         }
 
         .audio-btn-play {
-            background: #28a745;
-            color: white;
+            background: white;
+            color: black;
+            border: 0.125rem solid black;
         }
 
         .audio-btn-play:hover {
@@ -405,8 +406,9 @@
         }
 
         .audio-btn-stop {
-            background: #dc3545;
-            color: white;
+            background: white;
+            color: black;
+            border: 0.125rem solid black;
         }
 
         .audio-btn-stop:hover {
@@ -421,6 +423,70 @@
             background: #ffffff;
             border-radius: 0.3125rem;
             border: 0.0625rem solid #dee2e6;
+        }
+
+        .speed-control {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin: 1.25rem auto;
+            padding: 1.25rem;
+            background: #ffffff;
+            border-radius: 0.5rem;
+            border: 0.125rem solid #000;
+            box-shadow: 0 0.125rem 0.5rem rgba(0,0,0,0.1);
+            max-width: 50%;
+        }
+
+        .speed-control label {
+            font-weight: bold;
+            color: #2c3e50;
+            white-space: nowrap;
+            font-size: 1rem;
+        }
+
+        .speed-slider {
+            flex: 1;
+            height: 0.5rem;
+            border-radius: 0.3125rem;
+            background: #ddd;
+            outline: none;
+            -webkit-appearance: none;
+            appearance: none;
+            cursor: pointer;
+        }
+
+        .speed-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 1.5rem;
+            height: 1.5rem;
+            border-radius: 50%;
+            background: #2c3e50;
+            cursor: pointer;
+            border: 0.125rem solid #fff;
+            box-shadow: 0 0.125rem 0.25rem rgba(0,0,0,0.3);
+        }
+
+        .speed-slider::-moz-range-thumb {
+            width: 1.5rem;
+            height: 1.5rem;
+            border-radius: 50%;
+            background: #2c3e50;
+            cursor: pointer;
+            border: 0.125rem solid #fff;
+            box-shadow: 0 0.125rem 0.25rem rgba(0,0,0,0.3);
+        }
+
+        .speed-value {
+            min-width: 3.5rem;
+            text-align: center;
+            font-weight: bold;
+            color: #2c3e50;
+            font-size: 1.125rem;
+            background: #f0f0f0;
+            padding: 0.25rem 0.5rem;
+            border-radius: 0.25rem;
         }
 
         @media (max-width: 48rem) {
@@ -573,8 +639,6 @@
     </div>
 
     <!-- SECCIÓN 2: SONIFICACIÓN -->
-    <h2 class="section-title">🎵 Sonificación de Datos</h2>
-
 
     <!-- Gráfico de sonificación: Salud Mental -->
     <div class="chart-container">
@@ -584,12 +648,27 @@
 
         <div class="audio-controls">
             <button id="play-btn-mental-health" class="audio-btn audio-btn-play">
-                🎵 Reproducir Sonificación
+                Reproducir Sonificación
             </button>
             <button id="stop-btn-mental-health" class="audio-btn audio-btn-stop">
-                ⏹️ Detener
+                Detener
             </button>
             <div id="audio-status-mental-health" class="audio-info">Listo para reproducir</div>
+        </div>
+
+        <!-- Control de velocidad -->
+        <div class="speed-control">
+            <label for="speed-slider-mental-health">Velocidad de reproducción:</label>
+            <input
+                type="range"
+                id="speed-slider-mental-health"
+                class="speed-slider"
+                min="1"
+                max="2.5"
+                step="0.1"
+                value="1"
+            >
+            <span class="speed-value" id="speed-value-mental-health">1.0x</span>
         </div>
 
         <div id="chart-mental-health" class="chart"></div>

@@ -51,17 +51,12 @@ export function createMentalHealthChart(data) {
     const mentalHealthScores = processedData.map(d => d.avgMentalHealth);
     const counts = processedData.map(d => d.count);
 
-    // Crear colores degradados del verde (salud alta) al rojo (salud baja)
-    const colors = mentalHealthScores.map(score => {
-        // Normalizar score (asumiendo rango típico 1-10)
-        const normalized = (score - 1) / 9;
-
-        // Verde (alta salud) a Rojo (baja salud)
-        const red = Math.round(255 * (1 - normalized));
-        const green = Math.round(255 * normalized);
-
-        return `rgb(${red}, ${green}, 50)`;
-    });
+    // Calcular porcentaje de disminución desde el inicio hasta las 8 horas (o el último punto disponible)
+    const baselineMentalHealth = mentalHealthScores[0];
+    const lastIndex = hours.length - 1;
+    const finalMentalHealth = mentalHealthScores[lastIndex];
+    const finalHours = hours[lastIndex];
+    const percentageDecrease = Math.round(((baselineMentalHealth - finalMentalHealth) / baselineMentalHealth) * 100);
 
     const trace = {
         x: hours,
@@ -70,18 +65,16 @@ export function createMentalHealthChart(data) {
         type: 'scatter',
         name: 'Salud Mental',
         line: {
-            color: 'black',
-            width: 2,
-            shape: 'spline'
+            color: 'rgba(55, 128, 191, 1.0)',
+            width: 3
         },
         marker: {
-            size: 10,
-            color: colors,
+            size: 8,
+            color: 'rgba(55, 128, 191, 0.8)',
             line: {
-                color: 'white',
+                color: 'rgba(55, 128, 191, 1.0)',
                 width: 2
-            },
-            symbol: 'circle'
+            }
         },
         hovertemplate: '<b>Horas de uso:</b> %{x:.1f}h<br>' +
                        '<b>Salud Mental (promedio):</b> %{y:.2f}<extra></extra>'
@@ -141,39 +134,21 @@ export function createMentalHealthChart(data) {
         hovermode: 'closest',
         annotations: [
             {
-                x: hours[0],
-                y: mentalHealthScores[0],
-                text: '✓ Salud óptima',
+                x: hours[lastIndex],
+                y: mentalHealthScores[lastIndex],
+                text: `La salud mental disminuye<br>un ${percentageDecrease}% a las ${finalHours.toFixed(1)} horas de uso`,
                 showarrow: true,
                 arrowhead: 2,
-                arrowcolor: 'green',
-                ax: 40,
-                ay: -40,
+                ax: -80,
+                ay: -50,
                 font: {
                     size: fontSizes.annotation,
-                    color: 'green',
-                    family: 'Arial, sans-serif',
-                    weight: 'bold'
+                    color: 'black',
+                    family: 'Arial, sans-serif'
                 },
-                bgcolor: 'rgba(200, 255, 200, 0.8)',
-                borderpad: 4
-            },
-            {
-                x: hours[hours.length - 1],
-                y: mentalHealthScores[mentalHealthScores.length - 1],
-                text: '⚠ Deterioro significativo',
-                showarrow: true,
-                arrowhead: 2,
-                arrowcolor: 'red',
-                ax: -40,
-                ay: -40,
-                font: {
-                    size: fontSizes.annotation,
-                    color: 'red',
-                    family: 'Arial, sans-serif',
-                    weight: 'bold'
-                },
-                bgcolor: 'rgba(255, 200, 200, 0.8)',
+                bgcolor: 'white',
+                bordercolor: 'black',
+                borderwidth: 1,
                 borderpad: 4
             }
         ]

@@ -235,58 +235,25 @@ export class MentalHealthSonification {
 
         const dataPoint = this.chartData[pointIndex];
 
-        // Crear marcador vertical en la posición actual
-        const verticalLine = {
-            type: 'line',
-            x0: dataPoint.hours,
-            x1: dataPoint.hours,
-            y0: 0,
-            y1: 10,
-            line: {
-                color: 'rgba(255, 215, 0, 0.7)',
-                width: 4,
-                dash: 'dash'
-            }
-        };
-
-        // Círculo en el punto actual
+        // Círculo grande y simple en el punto actual
         const circle = {
             type: 'circle',
             xref: 'x',
             yref: 'y',
-            x0: dataPoint.hours - 0.2,
-            x1: dataPoint.hours + 0.2,
-            y0: dataPoint.avgMentalHealth - 0.3,
-            y1: dataPoint.avgMentalHealth + 0.3,
-            fillcolor: 'rgba(255, 215, 0, 0.5)',
+            x0: dataPoint.hours - 0.3,
+            x1: dataPoint.hours + 0.3,
+            y0: dataPoint.avgMentalHealth - 0.4,
+            y1: dataPoint.avgMentalHealth + 0.4,
+            fillcolor: 'rgba(255, 0, 0, 0.3)',
             line: {
-                color: 'rgba(255, 215, 0, 1)',
+                color: 'rgba(255, 0, 0, 1)',
                 width: 3
             }
         };
 
-        const annotation = {
-            x: dataPoint.hours,
-            y: dataPoint.avgMentalHealth,
-            text: `${dataPoint.hours.toFixed(1)}h | Score: ${dataPoint.avgMentalHealth.toFixed(1)}`,
-            showarrow: true,
-            arrowhead: 2,
-            arrowcolor: 'gold',
-            ax: 0,
-            ay: -40,
-            bgcolor: 'rgba(255, 215, 0, 0.9)',
-            font: {
-                color: 'black',
-                size: 11,
-                family: 'Arial, sans-serif',
-                weight: 'bold'
-            },
-            borderpad: 4
-        };
-
         Plotly.relayout('chart-mental-health', {
-            shapes: [verticalLine, circle],
-            annotations: [annotation]
+            shapes: [circle],
+            annotations: []
         });
     }
 
